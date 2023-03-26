@@ -80,10 +80,10 @@ function BypassAntiCheat()
 	local OldAudio
 	OldAudio = hookfunction(Audio.Play, function(...)
 		local Sound = ...
-		if Sound == "rbxassetid://7009904957" then
+		if Sound == "rbxassetid://7009904957" or Sound == "rbxassetid://7000720081" or Sound == "rbxassetid://7358008634" then
 			return nil
 		else
-			return OldAudio
+			return OldAudio(...)
 		end
 	end)
 	local WorldCmds = require(game:GetService("ReplicatedStorage").Library.Client.WorldCmds)

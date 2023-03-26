@@ -5,21 +5,6 @@ local hoverbrd = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Sc
 local Filename = "PSXsettings.json"
 local json
 
-function ReadSettings(index)
-	local HttpService = game:GetService("HttpService")
-	local value
-	if (readfile and isfile) and isfile(Filename) then
-		local settingsTable = json
-		settingsTable = HttpService:JSONDecode(readfile(Filename))
-		for i, v in pairs(settingsTable) do
-			if i == index then
-				value = v
-			end
-		end
-		return value
-	end
-end
-
 --Services
 local TeleportService = game:GetService("TeleportService")
 
@@ -97,6 +82,22 @@ end
 
 BypassAntiCheat()
 
+function ReadSettings(index)
+	local HttpService = game:GetService("HttpService")
+	local value
+	if (readfile and isfile) and isfile(Filename) then
+		local settingsTable = json
+		settingsTable = HttpService:JSONDecode(readfile(Filename))
+		for i, v in pairs(settingsTable) do
+			if i == index then
+				value = v
+			end
+		end
+		return value
+	end
+end
+
+
 --//server hopper
 local HttpService = game:GetService("HttpService")
 local Site = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. game.PlaceId .. '/servers/Public?sortOrder=Asc&limit=100'))
@@ -173,6 +174,15 @@ spawn(function()
 	getgenv().CurrentGems = nil
 	spawn(function()
 		local lib = require(game.ReplicatedStorage:WaitForChild("Framework"):WaitForChild("Library"))
+		local function Check()
+			if lib.Loaded then
+				return true
+			end
+			if not lib.Loaded then
+				return false
+			end
+		end
+		repeat wait() until Check()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
 	end)
 	local said = false
@@ -222,10 +232,12 @@ spawn(function()
 					task.wait(0.2)
 					print("No Comets Found Hopping")
 					print("Comets Broke "..CometsBroke)
-					if CometsBroke > 0 and not said then
-						GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
-						print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
-						said = true
+					if CometsBroke ~= 0 and not said then
+						if getgenv().CurrentGems then
+							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
+							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
+							said = true
+						end
 					end
 					ServerHop()
 				end
@@ -233,6 +245,49 @@ spawn(function()
 		end
 	end
 end)
+
+local data = {
+		content = nil,
+		embeds = {
+			{
+				title = "Comets",
+				description = "Mini Comets 0\nMasive Comets 0\nTotal Comets 0\nTook ... s to break",
+				color = 5814783,
+				fields = {
+					{
+						name = "Diamonds",
+						value = "💎 Gems Earned 100\n💎 Gems Total  10000\n💎 Gems From All Accounts 10000"
+					},
+					{
+						name = "Player",
+						value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
+					}
+				}
+			}
+		},
+		username = "NiggaScript",
+		attachments = {}
+}
+
+function SendMessage(Webhook, data)
+	local webhookcheck =
+		is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
+		secure_load and "Sentinel" or
+		KRNL_LOADED and "Krnl" or
+		SONA_LOADED and "Sona" or
+		"Kid with shit exploit"
+
+	local url =
+		Webhook
+	local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+	local headers = {
+		["content-type"] = "application/json"
+	}
+	request = http_request or request or HttpPost or syn.request
+	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+	request(abcdef)
+end
 
 local lib = require(game:GetService("ReplicatedStorage").Framework.Library)
 

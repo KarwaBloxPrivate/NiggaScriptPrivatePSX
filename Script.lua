@@ -5,17 +5,6 @@ local hoverbrd = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Sc
 
 local Filename = "PSXsettings.json"
 local json
-function CreateSettings()
-	local HttpService = game:GetService("HttpService")
-	if (isfolder) and (makefolder) then
-		makefolder("NiggaScript")
-	end
-	if (writefile) then
-		json = HttpService:JSONEncode(main.Config)
-		writefile(Filename, json)   
-	end
-end
-
 
 function ReadSettings(index)
 	local HttpService = game:GetService("HttpService")
@@ -874,6 +863,17 @@ end
 Playerdisplay = game.Players.LocalPlayer.DisplayName
 
 local main = Library:New({name = "Nigga Script | Pet Simulator X |"})
+
+function CreateSettings()
+	local HttpService = game:GetService("HttpService")
+	if (isfolder) and (makefolder) then
+		makefolder("NiggaScript")
+	end
+	if (writefile) then
+		json = HttpService:JSONEncode(main.Config)
+		writefile(Filename, json)   
+	end
+end
 
 
 local Tab = main:CreateTab({

@@ -168,14 +168,15 @@ spawn(function()
 			end	
 		end
 	end
+	local CometsBroke = 0 
+	local GemsFromComets = 0
+	local CurrentGems
+	local said = false
 	while task.wait(0.1) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
 		local Coinid
 		local CometType
 		local Area
-		local CometsBroke = 0
-		local CurrentGems
-		local GemsFromComets
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -186,7 +187,6 @@ spawn(function()
 					CometType = Info.Type
 					Area = Info.AreaId 
 					CurrentGems = Save.Get().Diamonds
-					GemsFromComets = 0
 				else
 					ServerHop()
 				end
@@ -219,9 +219,10 @@ spawn(function()
 					task.wait(0.2)
 					print("No Comets Found Hopping")
 					print("Comets Broke "..CometsBroke)
-					if CometsBroke > 0 then
+					if CometsBroke > 0 and not said then
 						GemsFromComets = Save.Get().Diamonds - CurrentGems 
-						print("Got "..GemsFromComets.." Gems From.. "..CometsBroke.." Comets")
+						print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
+						said = true
 					end
 					ServerHop()
 				end

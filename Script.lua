@@ -112,7 +112,7 @@ function ServerHop()
 			elseif typeof(v.ping) == "table" and typeof(v.ping.total) == "number" then
 				ping = v.ping.total
 			end
-			if ping ~= nil and ping > 70 and v.playing and v.playing < v.maxPlaying then
+			if ping ~= nil and ping > 70 and v.playing then
 				table.insert(Servers, {ping = ping, server = v})
 			end
 		end
@@ -126,14 +126,14 @@ function ServerHop()
 	local Filename = "NiggaScriptAntiSameServer.json"
 	for i, v in ipairs(Servers) do
 		jobid = v.server.id
-		playerplaying = v.server.playing
-		if isfile(Filename) and jobid ~= HttpService:JSONEncode(Filename) and playerplaying < v.maxPlayers then
+		if isfile(Filename) and jobid ~= HttpService:JSONEncode(Filename) and v.server.playing < v.server.maxPlayers then
 			local server = v.server
 			jobid = v.server.id
 			ping = v.server.ping
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobid, LocalPlayer)
 			print(jobid)
 			print("ping: "..ping)
+			print(v.server.playing.."/"..v.server.maxPlayers)
 			break
 		end
 	end

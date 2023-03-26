@@ -143,7 +143,7 @@ function ServerHop()
 			ping = v.server.ping
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobid, LocalPlayer)
 			print(jobid)
-			print(ping)
+			print("ping: "..ping)
 			break
 		end
 	end

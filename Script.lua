@@ -163,7 +163,7 @@ spawn(function()
 			return false
 		end
 	end
-	repeat task.wait() until CheckForCometsScript()
+	repeat task.wait(0) until CheckForCometsScript()
 	print("Comet Scripts Loaded")
 	local function FindComet()
 		for i, v in pairs(Network.Invoke("Comets: Get Data")) do

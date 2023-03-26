@@ -122,7 +122,7 @@ function ServerHop()
 			elseif typeof(v.ping) == "table" and typeof(v.ping.total) == "number" then
 				ping = v.ping.total
 			end
-			if ping ~= nil and ping > 30 then
+			if ping ~= nil and ping > math.random(1,50) then
 				table.insert(Servers, {ping = ping, server = v})
 			end
 		end
@@ -185,6 +185,7 @@ spawn(function()
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
+				print("Comet Found")
 				if Info ~= nil then
 					Coinid = Info.CoinId
 					CometType = Info.Type

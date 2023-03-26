@@ -122,7 +122,7 @@ function ServerHop()
 			elseif typeof(v.ping) == "table" and typeof(v.ping.total) == "number" then
 				ping = v.ping.total
 			end
-			if ping ~= nil then
+			if ping ~= nil and ping > 30 then
 				table.insert(Servers, {ping = ping, server = v})
 			end
 		end

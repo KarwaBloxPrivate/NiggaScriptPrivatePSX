@@ -132,6 +132,7 @@ function ServerHop()
 	end)
 	local jobid 
 	local playerplaying
+	local ping
 	local Filename = "NiggaScriptAntiSameServer.json"
 	for i, v in ipairs(Servers) do
 		jobid = v.server.id
@@ -139,8 +140,10 @@ function ServerHop()
 		if isfile(Filename) and jobid ~= HttpService:JSONEncode(Filename) then
 			local server = v.server
 			jobid = v.server.id
+			ping = v.server.ping
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobid, LocalPlayer)
 			print(jobid)
+			print(ping)
 			break
 		end
 	end

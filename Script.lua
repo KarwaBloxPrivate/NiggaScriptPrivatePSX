@@ -170,7 +170,11 @@ spawn(function()
 	end
 	local CometsBroke = 0 
 	local GemsFromComets = 0
-	local CurrentGems
+	getgenv().CurrentGems = nil
+	spawn(function()
+		local lib = require(game.ReplicatedStorage:WaitForChild("Framework"):WaitForChild("Library"))
+		getgenv().CurrentGems = lib.Save.Get().Diamonds
+	end)
 	local said = false
 	while task.wait(0.1) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
@@ -186,7 +190,6 @@ spawn(function()
 					Coinid = Info.CoinId
 					CometType = Info.Type
 					Area = Info.AreaId 
-					CurrentGems = Save.Get().Diamonds
 				else
 					ServerHop()
 				end
@@ -220,7 +223,7 @@ spawn(function()
 					print("No Comets Found Hopping")
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke > 0 and not said then
-						GemsFromComets = Save.Get().Diamonds - CurrentGems 
+						GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 						print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 						said = true
 					end

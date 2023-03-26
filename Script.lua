@@ -174,8 +174,8 @@ spawn(function()
 		local CometType
 		local Area
 		local CometsBroke = 0
-		--local CurrentGems = Save.Get().Diamonds
-		--local GemsFromComets = 0
+		local CurrentGems
+		local GemsFromComets
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -193,6 +193,8 @@ spawn(function()
 					print("Changing World To "..Info.WorldId)
 				end
 				if WorldCmds.HasLoaded() and #table1 == 0 then
+					CurrentGems = Save.Get().Diamonds
+					GemsFromComets = 0
 					Variables.Teleporting = false
 					teleport.Teleport(Area, true)
 					Variables.Teleporting = false
@@ -216,8 +218,8 @@ spawn(function()
 					task.wait(0.2)
 					print("No Comets Found Hopping")
 					if CometsBroke ~= 0 then
-						--GemsFromComets = Save.Get().Diamonds - CurrentGems 
-						--print("Got "..GemsFromComets.." Gems From.. "..CometsBroke.." Comets")
+						GemsFromComets = Save.Get().Diamonds - CurrentGems 
+						print("Got "..GemsFromComets.." Gems From.. "..CometsBroke.." Comets")
 					end
 					ServerHop()
 				end

@@ -186,6 +186,7 @@ spawn(function()
 			if FindComet() ~= nil then
 				local Info = FindComet()
 				print("Comet Found")
+				repeat task.wait(0) until WorldCmds.HasLoaded()
 				if Info ~= nil then
 					Coinid = Info.CoinId
 					CometType = Info.Type

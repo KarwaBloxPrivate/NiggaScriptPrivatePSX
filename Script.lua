@@ -170,6 +170,8 @@ spawn(function()
 		end
 	end
 	local CometsBroke = 0 
+	local MiniComets = 0
+	local MasiveComets = 0
 	local GemsFromComets = 0
 	getgenv().CurrentGems = nil
 	spawn(function()
@@ -191,6 +193,7 @@ spawn(function()
 		local Coinid
 		local CometType
 		local Area
+		local data
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -208,6 +211,28 @@ spawn(function()
 					print("Changing World To "..Info.WorldId)
 				end
 				if WorldCmds.HasLoaded() and #table1 == 0 then
+					data = {
+						content = nil,
+						embeds = {
+							{
+								title = "Comets",
+								description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook ... s to break",
+								color = 5814783,
+								fields = {
+									{
+										name = "Diamonds",
+										value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts 10000"
+									},
+									{
+										name = "Player",
+										value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
+									}
+								}
+							}
+						},
+						username = "NiggaScript",
+						attachments = {}
+					}
 					task.wait(0.2)
 					Variables.Teleporting = false
 					teleport.Teleport(Area, true)
@@ -234,6 +259,9 @@ spawn(function()
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
+							if getgenv().CometNotify then
+								SendMessage(getgenv().CometWebhook, data)
+							end
 							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 							said = true
@@ -246,28 +274,6 @@ spawn(function()
 	end
 end)
 
-local data = {
-		content = nil,
-		embeds = {
-			{
-				title = "Comets",
-				description = "Mini Comets 0\nMasive Comets 0\nTotal Comets 0\nTook ... s to break",
-				color = 5814783,
-				fields = {
-					{
-						name = "Diamonds",
-						value = "💎 Gems Earned 100\n💎 Gems Total  10000\n💎 Gems From All Accounts 10000"
-					},
-					{
-						name = "Player",
-						value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
-					}
-				}
-			}
-		},
-		username = "NiggaScript",
-		attachments = {}
-}
 
 function SendMessage(Webhook, data)
 	local webhookcheck =

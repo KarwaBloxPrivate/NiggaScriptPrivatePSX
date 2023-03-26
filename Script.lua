@@ -1,4 +1,3 @@
-
 local Library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/KarwaBlox/UI-Library-Poland-Hub/main/Library.lua')))()
 local hoverbrd = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.GUIs.Hoverboards)
 
@@ -78,19 +77,21 @@ function BypassAntiCheat()
 		return OldGet(Packet)
 	end
 	local Audio = require(game:GetService("ReplicatedStorage").Library.Audio)
-	local old1 = hookfunction(Audio.Play, function(sound, ...)
-		return {
-			Play = function()
-				print("Fake sound played")
-			end,
-			Stop = function()
-				print("Fake sound stopped")
-			end,
-			IsPlaying = function()
-				return false
-			end
-		}
+	local OldAudio
+	OldAudio = hookfunction(Audio.Play, function(...)
+		local Sound = ...
+		if Sound == "rbxassetid://7009904957" then
+			return nil
+		else
+			return OldAudio
+		end
 	end)
+	local WorldCmds = require(game:GetService("ReplicatedStorage").Library.Client.WorldCmds)
+	for i, v in pairs(getconstants(WorldCmds.Load)) do
+		if v == "Sound" then
+			setconstant(WorldCmds.Load, i, "ADAWDAWDAWD")
+		end
+	end
 	print("Hooked Functions")
 end
 
@@ -148,6 +149,7 @@ spawn(function()
 	local Network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
 	local WorldCmds = require(game:GetService("ReplicatedStorage").Library.Client.WorldCmds)
 	local Variables = require(game:GetService("ReplicatedStorage").Library.Variables)
+	local Save = require(game:GetService("ReplicatedStorage").Library.Client.Save)
 	local function CheckForCometsScript()
 		if game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Comets then 
 			return true
@@ -163,7 +165,7 @@ spawn(function()
 				return v
 			else
 				return nil
-			end
+			end	
 		end
 	end
 	while task.wait(0.1) do
@@ -171,6 +173,9 @@ spawn(function()
 		local Coinid
 		local CometType
 		local Area
+		local CometsBroke = 0
+		--local CurrentGems = Save.Get().Diamonds
+		--local GemsFromComets = 0
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -183,7 +188,7 @@ spawn(function()
 				else
 					ServerHop()
 				end
-				if WorldCmds.HasLoaded() and WorldCmds.Get() ~= Info.WorldId then
+				if WorldCmds.HasLoaded() and WorldCmds.Get() ~= Info.WorldId and #table1 == 0 then
 					WorldCmds.Load(Info.WorldId)
 					print("Changing World To "..Info.WorldId)
 				end
@@ -197,13 +202,23 @@ spawn(function()
 						JoinCoin(Coinid, GetPetsTable())
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
+						CometsBroke += 1
 					end
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
+					if CometType == "Massive Comet" then
+						for i, v in pairs(game:GetService("Workspace")["__THINGS"].Comets:GetChildren()) do
+							Network.Invoke("Comets: Open Egg", v.Name)
+						end
+					end
 				end
 			else
 				if #table1 == 0 then
 					task.wait(0.2)
 					print("No Comets Found Hopping")
+					if CometsBroke ~= 0 then
+						--GemsFromComets = Save.Get().Diamonds - CurrentGems 
+						--print("Got "..GemsFromComets.." Gems From.. "..CometsBroke.." Comets")
+					end
 					ServerHop()
 				end
 			end

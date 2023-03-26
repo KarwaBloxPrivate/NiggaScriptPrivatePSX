@@ -218,7 +218,8 @@ spawn(function()
 				if #table1 == 0 then
 					task.wait(0.2)
 					print("No Comets Found Hopping")
-					if CometsBroke ~= 0 then
+					print("Comets Broke "..CometsBroke)
+					if CometsBroke > 0 then
 						GemsFromComets = Save.Get().Diamonds - CurrentGems 
 						print("Got "..GemsFromComets.." Gems From.. "..CometsBroke.." Comets")
 					end

@@ -185,6 +185,8 @@ spawn(function()
 					Coinid = Info.CoinId
 					CometType = Info.Type
 					Area = Info.AreaId 
+					CurrentGems = Save.Get().Diamonds
+					GemsFromComets = 0
 				else
 					ServerHop()
 				end
@@ -193,8 +195,7 @@ spawn(function()
 					print("Changing World To "..Info.WorldId)
 				end
 				if WorldCmds.HasLoaded() and #table1 == 0 then
-					CurrentGems = Save.Get().Diamonds
-					GemsFromComets = 0
+					task.wait(0.2)
 					Variables.Teleporting = false
 					teleport.Teleport(Area, true)
 					Variables.Teleporting = false
@@ -204,7 +205,8 @@ spawn(function()
 						JoinCoin(Coinid, GetPetsTable())
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
-						CometsBroke += 1
+						CometsBroke = CometsBroke + 1
+						print("Broke A "..CometsBroke.. " Comet")
 					end
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
 					if CometType == "Massive Comet" then

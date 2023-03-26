@@ -200,7 +200,7 @@ spawn(function()
 					teleport.Teleport(Area, true)
 					Variables.Teleporting = false
 					print("Teleported To "..CometType)
-					repeat task.wait(0.1) until Network.Invoke("Get Coins")[Coinid]
+					task.wait(0.1)
 					if Network.Invoke("Get Coins")[Coinid] then
 						JoinCoin(Coinid, GetPetsTable())
 						FarmCoin(Coinid, GetPetsTable())

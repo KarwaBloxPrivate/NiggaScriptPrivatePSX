@@ -126,7 +126,7 @@ function ServerHop()
 	for i, v in ipairs(Servers) do
 		jobid = v.server.id
 		playerplaying = v.server.playing
-		if isfile(Filename) and jobid ~= HttpService:JSONEncode(Filename) then
+		if isfile(Filename) and jobid ~= HttpService:JSONEncode(Filename) and playerplaying ~= v.maxPlayers then
 			local server = v.server
 			jobid = v.server.id
 			ping = v.server.ping

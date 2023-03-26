@@ -181,7 +181,7 @@ spawn(function()
 				local Info = FindComet()
 				print("Comet Found")
 				repeat task.wait(0) until WorldCmds.HasLoaded()
-				if Info ~= nil then
+				if Info ~= nil and FindComet() ~= nil then
 					Coinid = Info.CoinId
 					CometType = Info.Type
 					Area = Info.AreaId 
@@ -206,13 +206,13 @@ spawn(function()
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
 						CometsBroke = CometsBroke + 1
-					end
-					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
-					if CometType == "Massive Comet" then
-						for i, v in pairs(game:GetService("Workspace")["__THINGS"].Comets:GetChildren()) do
-							Network.Invoke("Comets: Open Egg", v.Name)
+						if CometType == "Massive Comet" then
+							for i, v in pairs(game:GetService("Workspace")["__THINGS"].Comets:GetChildren()) do
+								Network.Invoke("Comets: Open Egg", v.Name)
+							end
 						end
 					end
+					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
 				end
 			else
 				if #table1 == 0 then

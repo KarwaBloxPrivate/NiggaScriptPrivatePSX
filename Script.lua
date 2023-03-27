@@ -320,6 +320,7 @@ spawn(function()
 							end
 							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 							said = true
+							ServerHop()
 						end
 					end
 					ServerHop()

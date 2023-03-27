@@ -281,7 +281,9 @@ spawn(function()
 									username = "NiggaScript",
 									attachments = {}
 								}
-								SendMessage(getgenv().CometWebhook, data)
+								local webhook = getgenv().CometWebhook or ReadSettings("Webhook")
+								print("Webhook: "..webhook)
+								SendMessage(webhook, data)
 							end
 							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 							said = true

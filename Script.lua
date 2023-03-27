@@ -210,6 +210,7 @@ spawn(function()
 		local CometType
 		local Area
 		local data
+		local Timetofarmcomets
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -237,6 +238,7 @@ spawn(function()
 						JoinCoin(Coinid, GetPetsTable())
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
+						Timetofarmcomets = tick()
 						CometsBroke = CometsBroke + 1
 						MiniComets = MiniComets + 1
 						if CometType == "Massive Comet" then
@@ -275,18 +277,32 @@ spawn(function()
 										writefile(filename, json)
 									end
 								end
+								local function GetAllDiamonds()
+									local HttpService = game:GetService("HttpService")
+									local filename = "NiggaScriptTotalGems.json"
+									local value = 0
+									if (readfile and isfile) and isfile(filename) then
+										local settingsTable = json
+										settingsTable = HttpService:JSONDecode(readfile(filename))
+										for i, v in pairs(settingsTable) do
+											value = value + v 
+										end
+										return value
+									end
+								end
 								CountAllGemsTogether()
+								local endtimeoffarming = tick() - Timetofarmcomets
 								data = {
 									content = nil,
 									embeds = {
 										{
 											title = "Comets",
-											description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook ... s to break",
+											description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook"..tostring(endtimeoffarming).."s to break",
 											color = 5814783,
 											fields = {
 												{
 													name = "Diamonds",
-													value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts 10000"
+													value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts "..tostring(GetAllDiamonds())
 												},
 												{
 													name = "Player",

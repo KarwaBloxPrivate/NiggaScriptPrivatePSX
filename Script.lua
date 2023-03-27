@@ -1,5 +1,4 @@
 local Library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/KarwaBlox/UI-Library-Poland-Hub/main/Library.lua')))()
-local hoverbrd = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.GUIs.Hoverboards)
 
 
 local Filename = "PSXsettings.json"
@@ -231,28 +230,6 @@ spawn(function()
 					print("Changing World To "..Info.WorldId)
 				end
 				if WorldCmds.HasLoaded() and #table1 == 0 then
-					data = {
-						content = nil,
-						embeds = {
-							{
-								title = "Comets",
-								description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook ... s to break",
-								color = 5814783,
-								fields = {
-									{
-										name = "Diamonds",
-										value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts 10000"
-									},
-									{
-										name = "Player",
-										value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
-									}
-								}
-							}
-						},
-						username = "NiggaScript",
-						attachments = {}
-					}
 					task.wait(0.2)
 					Variables.Teleporting = false
 					teleport.Teleport(Area, true)
@@ -281,6 +258,28 @@ spawn(function()
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
 							if ReadSettings("Send Discord Notification") then
+								data = {
+									content = nil,
+									embeds = {
+										{
+											title = "Comets",
+											description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook ... s to break",
+											color = 5814783,
+											fields = {
+												{
+													name = "Diamonds",
+													value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts 10000"
+												},
+												{
+													name = "Player",
+													value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
+												}
+											}
+										}
+									},
+									username = "NiggaScript",
+									attachments = {}
+								}
 								SendMessage(getgenv().CometWebhook, data)
 							end
 							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
@@ -326,7 +325,7 @@ function RedeemGifts()
 		end
 	end
 end
-
+local hoverbrd = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.GUIs.Hoverboards)
 function GetGamepasses()
 	lib.Save.Get().Gamepasses = {}
 	for i, v in pairs(lib.Directory.Gamepasses) do

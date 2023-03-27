@@ -207,10 +207,6 @@ spawn(function()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
 	end)
 	local said = false
-	if FindComet() == nil then
-		print("No Comets Found Hopping")
-		ServerHop()
-	end
 	while task.wait(0) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
 		local Coinid
@@ -258,6 +254,7 @@ spawn(function()
 					task.wait(0.2)
 					print("No Comets Found Hopping")
 					ServerHop()
+					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
 							if ReadSettings("Send Discord Notification") then

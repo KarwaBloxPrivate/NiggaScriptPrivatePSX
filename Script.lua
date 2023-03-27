@@ -251,7 +251,6 @@ spawn(function()
 				if #table1 == 0 then
 					task.wait(0.2)
 					print("No Comets Found Hopping")
-					ServerHop()
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
@@ -287,6 +286,7 @@ spawn(function()
 							said = true
 						end
 					end
+					ServerHop()
 				end
 			end
 		end

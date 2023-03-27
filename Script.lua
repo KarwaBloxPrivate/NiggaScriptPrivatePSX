@@ -113,7 +113,7 @@ function ServerHop()
 			elseif typeof(v.ping) == "table" and typeof(v.ping.total) == "number" then
 				ping = v.ping.total
 			end
-			if ping ~= nil and ping > 70 and v.playing then
+			if ping ~= nil and ping > 1 and v.playing then
 				table.insert(Servers, {ping = ping, server = v})
 			end
 		end
@@ -142,6 +142,26 @@ function ServerHop()
 		json = HttpService:JSONEncode(jobid)
 		writefile(Filename, json)   
 	end
+end
+
+function SendMessage(Webhook, data)
+	local webhookcheck =
+		is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
+		secure_load and "Sentinel" or
+		KRNL_LOADED and "Krnl" or
+		SONA_LOADED and "Sona" or
+		"Kid with shit exploit"
+
+	local url =
+		Webhook
+	local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+	local headers = {
+		["content-type"] = "application/json"
+	}
+	request = http_request or request or HttpPost or syn.request
+	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+	request(abcdef)
 end
 
 --//Comet Farming
@@ -244,8 +264,10 @@ spawn(function()
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
 						CometsBroke = CometsBroke + 1
+						MiniComets = MiniComets + 1
 						if CometType == "Massive Comet" then
 							Network.Invoke("Comets: Open Egg", Info.Id)
+							MasiveComets = MasiveComets + 1
 						end
 					end
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
@@ -258,7 +280,7 @@ spawn(function()
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
-							if getgenv().CometNotify or ReadSettings("Send Discord Notification") then
+							if ReadSettings("Send Discord Notification") then
 								SendMessage(getgenv().CometWebhook, data)
 							end
 							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
@@ -271,27 +293,6 @@ spawn(function()
 		end
 	end
 end)
-
-
-function SendMessage(Webhook, data)
-	local webhookcheck =
-		is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
-		secure_load and "Sentinel" or
-		KRNL_LOADED and "Krnl" or
-		SONA_LOADED and "Sona" or
-		"Kid with shit exploit"
-
-	local url =
-		Webhook
-	local newdata = game:GetService("HttpService"):JSONEncode(data)
-
-	local headers = {
-		["content-type"] = "application/json"
-	}
-	request = http_request or request or HttpPost or syn.request
-	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-	request(abcdef)
-end
 
 local lib = require(game:GetService("ReplicatedStorage").Framework.Library)
 

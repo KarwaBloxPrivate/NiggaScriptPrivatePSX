@@ -158,8 +158,8 @@ spawn(function()
 			return false
 		end
 	end
-	repeat task.wait(0) until CheckForCometsScript()
-	print("Comet Scripts Loaded")
+	--repeat task.wait() until CheckForCometsScript()
+	print("Comet Script Check Diabled for testing purposes")
 	local function FindComet()
 		for i, v in pairs(Network.Invoke("Comets: Get Data")) do
 			if v then
@@ -188,7 +188,7 @@ spawn(function()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
 	end)
 	local said = false
-	while task.wait(0.1) do
+	while task.wait(0) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
 		local Coinid
 		local CometType
@@ -245,9 +245,7 @@ spawn(function()
 						print("Farming Comet")
 						CometsBroke = CometsBroke + 1
 						if CometType == "Massive Comet" then
-							for i, v in pairs(game:GetService("Workspace")["__THINGS"].Comets:GetChildren()) do
-								Network.Invoke("Comets: Open Egg", v.Name)
-							end
+							Network.Invoke("Comets: Open Egg", Info.Id)
 						end
 					end
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
@@ -256,10 +254,11 @@ spawn(function()
 				if #table1 == 0 then
 					task.wait(0.2)
 					print("No Comets Found Hopping")
+					ServerHop()
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
-							if getgenv().CometNotify then
+							if getgenv().CometNotify or ReadSettings("Send Discord Notification") then
 								SendMessage(getgenv().CometWebhook, data)
 							end
 							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
@@ -267,7 +266,6 @@ spawn(function()
 							said = true
 						end
 					end
-					ServerHop()
 				end
 			end
 		end

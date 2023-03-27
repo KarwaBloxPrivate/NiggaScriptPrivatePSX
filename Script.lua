@@ -202,7 +202,6 @@ spawn(function()
 		end
 		repeat wait() until Check()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
-		print(getgenv().CurrentGems)
 	end)
 	local said = false
 	while task.wait(0) do
@@ -243,6 +242,7 @@ spawn(function()
 						if CometType == "Massive Comet" then
 							Network.Invoke("Comets: Open Egg", Info.Id)
 							MasiveComets = MasiveComets + 1
+							CometsBroke = CometsBroke + 1
 						end
 					end
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
@@ -256,6 +256,16 @@ spawn(function()
 						if getgenv().CurrentGems then
 							if ReadSettings("Send Discord Notification") or getgenv().CometNotify then
 								GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
+								local function CountAllGemsTogether()
+									local TotalLocalPlayerGems = {}
+									TotalLocalPlayerGems[game:GetService("Players").LocalPlayer.Name] = Save.Get().Diamonds
+									local HttpService = game:GetService("HttpService")
+									if (writefile) then
+										json = HttpService:JSONEncode(TotalLocalPlayerGems)
+										writefile("NiggaScriptTotalGems.json", json)   
+									end
+								end
+								CountAllGemsTogether()
 								data = {
 									content = nil,
 									embeds = {
@@ -270,7 +280,7 @@ spawn(function()
 												},
 												{
 													name = "Player",
-													value = "Name ||LocalPlayer||\nDisplay Name ||LocalPlayer||"
+													value = "Name ||"..game:GetService("Players").LocalPlayer.Name.."||\nDisplay Name ||"..game:GetService("Players").LocalPlayer.DisplayName.."||"
 												}
 											}
 										}

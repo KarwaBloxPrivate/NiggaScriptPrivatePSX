@@ -131,9 +131,6 @@ function ServerHop()
 			jobid = v.server.id
 			ping = v.server.ping
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobid, LocalPlayer)
-			print(jobid)
-			print("ping: "..ping)
-			print(v.server.playing.."/"..v.server.maxPlayers)
 			task.wait(0.1)
 		end
 	end
@@ -205,6 +202,7 @@ spawn(function()
 		end
 		repeat wait() until Check()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
+		print(getgenv().CurrentGems)
 	end)
 	local said = false
 	while task.wait(0) do
@@ -257,7 +255,7 @@ spawn(function()
 					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
-							if ReadSettings("Send Discord Notification") then
+							if ReadSettings("Send Discord Notification") or getgenv().CometNotify then
 								GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 								data = {
 									content = nil,

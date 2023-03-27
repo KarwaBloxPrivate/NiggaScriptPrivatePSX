@@ -257,12 +257,22 @@ spawn(function()
 							if ReadSettings("Send Discord Notification") or getgenv().CometNotify then
 								GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 								local function CountAllGemsTogether()
-									local TotalLocalPlayerGems = {}
-									TotalLocalPlayerGems[game:GetService("Players").LocalPlayer.Name] = Save.Get().Diamonds
 									local HttpService = game:GetService("HttpService")
+									local filename = "NiggaScriptTotalGems.json"
+									
+									local TotalLocalPlayerGems = {}
+									if (readfile) then
+										local fileContents = readfile(filename)
+										if fileContents then
+											TotalLocalPlayerGems = HttpService:JSONDecode(fileContents)
+										end
+									end
+
+									TotalLocalPlayerGems[game:GetService("Players").LocalPlayer.Name] = Save.Get().Diamonds
+
 									if (writefile) then
-										json = HttpService:JSONEncode(TotalLocalPlayerGems)
-										writefile("NiggaScriptTotalGems.json", json)   
+										local json = HttpService:JSONEncode(TotalLocalPlayerGems)
+										writefile(filename, json)
 									end
 								end
 								CountAllGemsTogether()

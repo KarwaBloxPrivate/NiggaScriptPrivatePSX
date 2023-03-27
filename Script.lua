@@ -140,6 +140,17 @@ function ServerHop()
 	end
 end
 
+function comma_value(amount)
+	local formatted = amount
+	while true do  
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+		if (k==0) then
+			break
+		end
+	end
+	return formatted
+end
+
 function SendMessage(Webhook, data)
 	local webhookcheck =
 		is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
@@ -288,7 +299,7 @@ spawn(function()
 										for i, v in pairs(settingsTable) do
 											value = value + v 
 										end
-										return value
+										return comma_value(value)
 									end
 								end
 								local endtimeoffarming = math.floor(tick() - Timetofarmcomets)
@@ -302,7 +313,7 @@ spawn(function()
 											fields = {
 												{
 													name = "Diamonds",
-													value = "💎 Gems Earned "..tostring(GemsFromComets).."\n💎 Gems Total "..tostring(Save.Get().Diamonds).."\n💎 Gems From All Accounts "..tostring(GetAllDiamonds())
+													value = "💎 Gems Earned "..tostring(comma_value(GemsFromComets)).."\n💎 Gems Total "..tostring(comma_value(Save.Get().Diamonds)).."\n💎 Gems From All Accounts "..tostring(GetAllDiamonds())
 												},
 												{
 													name = "Player",

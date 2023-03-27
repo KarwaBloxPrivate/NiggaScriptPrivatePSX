@@ -134,7 +134,7 @@ function ServerHop()
 			print(jobid)
 			print("ping: "..ping)
 			print(v.server.playing.."/"..v.server.maxPlayers)
-			break
+			task.wait(0.1)
 		end
 	end
 	if (writefile) then
@@ -177,8 +177,8 @@ spawn(function()
 			return false
 		end
 	end
-	--repeat task.wait() until CheckForCometsScript()
-	print("Comet Script Check Diabled for testing purposes")
+	repeat task.wait() until CheckForCometsScript()
+	print("Comet Script Enabled")
 	local function FindComet()
 		for i, v in pairs(Network.Invoke("Comets: Get Data")) do
 			if v then
@@ -207,6 +207,10 @@ spawn(function()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
 	end)
 	local said = false
+	if FindComet() == nil then
+		print("No Comets Found Hopping")
+		ServerHop()
+	end
 	while task.wait(0) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
 		local Coinid
@@ -254,7 +258,6 @@ spawn(function()
 					task.wait(0.2)
 					print("No Comets Found Hopping")
 					ServerHop()
-					print("Comets Broke "..CometsBroke)
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
 							if ReadSettings("Send Discord Notification") then

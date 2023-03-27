@@ -112,7 +112,7 @@ function ServerHop()
 			elseif typeof(v.ping) == "table" and typeof(v.ping.total) == "number" then
 				ping = v.ping.total
 			end
-			if ping ~= nil and ping > 1 and v.playing then
+			if ping ~= nil and ping > math.random(50,70) and v.playing then
 				table.insert(Servers, {ping = ping, server = v})
 			end
 		end
@@ -204,13 +204,13 @@ spawn(function()
 		getgenv().CurrentGems = lib.Save.Get().Diamonds
 	end)
 	local said = false
+	local Timetofarmcomets
 	while task.wait(0) do
 		local table1 = game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()
 		local Coinid
 		local CometType
 		local Area
 		local data
-		local Timetofarmcomets
 		if getgenv().AutoFarmComets or ReadSettings("Auto Farm Comets") then
 			if FindComet() ~= nil then
 				local Info = FindComet()
@@ -277,6 +277,7 @@ spawn(function()
 										writefile(filename, json)
 									end
 								end
+								CountAllGemsTogether()
 								local function GetAllDiamonds()
 									local HttpService = game:GetService("HttpService")
 									local filename = "NiggaScriptTotalGems.json"
@@ -290,14 +291,13 @@ spawn(function()
 										return value
 									end
 								end
-								CountAllGemsTogether()
-								local endtimeoffarming = tick() - Timetofarmcomets
+								local endtimeoffarming = math.floor(tick() - Timetofarmcomets)
 								data = {
 									content = nil,
 									embeds = {
 										{
 											title = "Comets",
-											description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook"..tostring(endtimeoffarming).."s to break",
+											description = "Mini Comets "..tostring(MiniComets).."\nMasive Comets "..tostring(MasiveComets).."\nTotal Comets "..tostring(CometsBroke).."\nTook "..tostring(endtimeoffarming).."s to break",
 											color = 5814783,
 											fields = {
 												{
@@ -317,6 +317,7 @@ spawn(function()
 								local webhook = getgenv().CometWebhook or ReadSettings("Webhook")
 								print("Webhook: "..webhook)
 								SendMessage(webhook, data)
+								ServerHop()
 							end
 							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 							said = true

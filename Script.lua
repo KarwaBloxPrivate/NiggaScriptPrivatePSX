@@ -258,6 +258,7 @@ spawn(function()
 					if CometsBroke ~= 0 and not said then
 						if getgenv().CurrentGems then
 							if ReadSettings("Send Discord Notification") then
+								GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 								data = {
 									content = nil,
 									embeds = {
@@ -282,7 +283,6 @@ spawn(function()
 								}
 								SendMessage(getgenv().CometWebhook, data)
 							end
-							GemsFromComets = Save.Get().Diamonds - getgenv().CurrentGems
 							print("Got "..GemsFromComets.." Gems From "..CometsBroke.." Comets")
 							said = true
 						end

@@ -104,7 +104,8 @@ local TeleportService = game:GetService("TeleportService")
 
 function ServerHop()
 	if isfile("CometServer.json") then
-		writefile("CometServer.json", "Not Active")
+		json = HttpService:JSONEncode("Not Active")
+		writefile("CometServer.json", json)
 	end
 	local Servers = {}
 	for i, v in pairs(Site.data) do

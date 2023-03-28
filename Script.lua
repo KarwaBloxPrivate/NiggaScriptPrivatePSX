@@ -274,7 +274,7 @@ spawn(function()
 									local filename = "NiggaScriptTotalGems.json"
 									
 									local TotalLocalPlayerGems = {}
-									if (readfile) then
+									if (readfile) and isfile(filename) then
 										local fileContents = readfile(filename)
 										if fileContents then
 											TotalLocalPlayerGems = HttpService:JSONDecode(fileContents)

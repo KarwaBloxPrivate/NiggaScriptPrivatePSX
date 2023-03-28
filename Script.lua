@@ -103,9 +103,6 @@ local Site = HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/ga
 local TeleportService = game:GetService("TeleportService")
 
 function ServerHop()
-	if isfile("CometServer.json") then
-		delfile("CometServer.json")
-	end
 	local Servers = {}
 	for i, v in pairs(Site.data) do
 		if v.playing and v.playing ~= v.maxPlayers then
@@ -140,6 +137,9 @@ function ServerHop()
 	if (writefile) then
 		json = HttpService:JSONEncode(jobid)
 		writefile(Filename, json)   
+	end
+	if isfile("CometServer.json") then
+		delfile("CometServer.json")
 	end
 end
 

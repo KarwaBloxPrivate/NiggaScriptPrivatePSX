@@ -229,10 +229,6 @@ spawn(function()
 			if FindComet() ~= nil then
 				local Info = FindComet()
 				print("Comet Found")
-				if (writefile) then
-					json = HttpService:JSONEncode(game.JobId)
-					writefile("CometServer.json", json)   
-				end
 				repeat task.wait(0) until WorldCmds.HasLoaded()
 				if Info ~= nil and FindComet() ~= nil then
 					Coinid = Info.CoinId
@@ -256,10 +252,6 @@ spawn(function()
 						JoinCoin(Coinid, GetPetsTable())
 						FarmCoin(Coinid, GetPetsTable())
 						print("Farming Comet")
-						if (writefile) then
-							json = HttpService:JSONEncode(game.JobId)
-							writefile("CometServer.json", json)   
-						end
 						Timetofarmcomets = tick()
 						CometsBroke = CometsBroke + 1
 						MiniComets = MiniComets + 1

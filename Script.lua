@@ -229,6 +229,15 @@ spawn(function()
 			if FindComet() ~= nil then
 				local Info = FindComet()
 				print("Comet Found")
+				local WorldHook
+				WorldHook = hookfunction(WorldCmds.Load, function(...)
+					local world = ...
+					if world ~= Info.WorldId then
+						world = Info.WorldId
+					end
+					return WorldHook(world)
+				end)
+				print("Hooked Load Function To Instantly Load To "..Info.WorldId)
 				repeat task.wait(0) until WorldCmds.HasLoaded()
 				if Info ~= nil and FindComet() ~= nil then
 					Coinid = Info.CoinId

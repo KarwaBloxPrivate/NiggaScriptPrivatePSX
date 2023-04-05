@@ -229,15 +229,22 @@ spawn(function()
 			if FindComet() ~= nil then
 				local Info = FindComet()
 				print("Comet Found")
-				local WorldHook
-				WorldHook = hookfunction(WorldCmds.Load, function(...)
-					local world = ...
-					if world ~= Info.WorldId then
-						world = Info.WorldId
+				if game:GetService("Players").LocalPlayer.PlayerGui.Loading.Enabled == false then
+					local WorldHook
+					WorldHook = hookfunction(WorldCmds.Load, function(...)
+						local world
+						local Info = FindComet()
+						if Info and Info.WorldId then 
+							world = Info.WorldId
+							return WorldHook(world)
+						else
+							return WorldHook(...)
+						end
+					end)
+					if Info then
+						print("Hooked Load Function To Instantly Load To "..Info.WorldId)
 					end
-					return WorldHook(world)
-				end)
-				print("Hooked Load Function To Instantly Load To "..Info.WorldId)
+				end	
 				repeat task.wait(0) until WorldCmds.HasLoaded()
 				if Info ~= nil and FindComet() ~= nil then
 					Coinid = Info.CoinId
@@ -251,7 +258,6 @@ spawn(function()
 					print("Changing World To "..Info.WorldId)
 				end
 				if WorldCmds.HasLoaded() and #table1 == 0 then
-					task.wait(0.2)
 					Variables.Teleporting = false
 					teleport.Teleport(Area, true)
 					Variables.Teleporting = false
@@ -273,6 +279,7 @@ spawn(function()
 					repeat task.wait(0.1) until not Network.Invoke("Get Coins")[Coinid]
 				end
 			else
+				repeat task.wait(0.5) until #table == 0
 				if #table1 == 0 then
 					task.wait(0.2)
 					print("No Comets Found Hopping")

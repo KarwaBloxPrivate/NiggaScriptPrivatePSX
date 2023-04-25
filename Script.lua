@@ -32,6 +32,8 @@ getgenv().RenameName = "CometPet"
 getgenv().AutoFarmComets = false
 getgenv().CometNotify = false
 getgenv().CometWebhook = nil
+getgenv().AutoIndexPets = false
+getgenv().AutoGold = false
 
 local SelectedEnchants = {}
 local teleport = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.GUIs.Teleport)
@@ -40,7 +42,7 @@ function BypassAntiCheat()
 	local functions = Network.Fire, Network.Invoke
 	local old 
 	old = hookfunction(getupvalue(functions, 1) , function(...) return true end)
-	
+
 	local Blunder = require(game:GetService("ReplicatedStorage"):FindFirstChild("BlunderList", true))
 	local OldGet = Blunder.getAndClear
 
@@ -229,7 +231,7 @@ spawn(function()
 			if FindComet() ~= nil then
 				local Info = FindComet()
 				print("Comet Found")
-				if game:GetService("Players").LocalPlayer.PlayerGui.Loading.Enabled == false then
+				if game:GetService("Players").LocalPlayer.PlayerGui.Loading.Enabled == false and WorldCmds.Get() ~= Info.WorldId then
 					local WorldHook
 					WorldHook = hookfunction(WorldCmds.Load, function(...)
 						local world
@@ -291,7 +293,7 @@ spawn(function()
 								local function CountAllGemsTogether()
 									local HttpService = game:GetService("HttpService")
 									local filename = "NiggaScriptTotalGems.json"
-									
+
 									local TotalLocalPlayerGems = {}
 									if (readfile) and isfile(filename) then
 										local fileContents = readfile(filename)
@@ -377,7 +379,7 @@ function CollectOrbs()
 		table.insert(OrbTbl, v.Name)
 	end
 	if OrbTbl[1] == nil then
-		
+
 	else
 		lib.Network.Fire("Claim Orbs", OrbTbl)
 	end
@@ -424,7 +426,7 @@ end
 
 function ActivateBoost(Boost)
 	if (Boost ~= nil) then
-		if Boost == "Triple Coins" or "Triple Damage" or "Super Lucky" or "Ultra Lucky" then
+		if Boost == "Triple Coins" or "Triple Damage" or "Super Lucky" or "Ultra Lucky" or "Triple Diamonds" then
 			if lib.Save.Get().BoostsInventory[Boost] then
 				lib.Network.Fire("Activate Boost", Boost)
 			end
@@ -547,7 +549,7 @@ end)
 function OpenEgg(Egg, triple, octuple)
 	if Egg == nil then 
 		print("Select Egg First")
-		elseif Egg ~= nil then
+	elseif Egg ~= nil then
 		lib.Network.Invoke("Buy Egg", Egg, triple, octuple)
 	end
 end
@@ -888,6 +890,205 @@ spawn(function()
 	end
 end)
 
+--Conversion
+function GetPetsToConvert(Machine, ammount, Hardcore, Shiny)
+	local PetsDirectory = lib.Directory.Pets
+	local ConvertPets = {}
+	local Count = 0
+	local Pets = {}
+	local IDToCheck
+
+	local PetIDs = {}
+	for i, v in pairs(lib.Save.Get().Pets) do
+		if not v.l and v.nk ~= getgenv().RenameName and not PetsDirectory[v.id].huge and not PetsDirectory[v.id].isPremium and not PetsDirectory[v.id].isGift then
+			if (Hardcore and v.hc) or (not Hardcore and not v.hc) and (Shiny and v.sh) or (not Shiny and not v.sh) then
+				if Machine == "Gold" and not v.r and not v.g and not v.dm or Machine == "Rainbow" and v.r or Machine == "Dark Matter" and v.dm then
+					if not PetIDs[v.id] then
+						PetIDs[v.id] = {}
+					end
+				end
+			end
+		end
+	end
+	for PETID, VV in pairs(PetIDs) do
+		IDToCheck = PETID
+		for i, v in pairs(lib.Save.Get().Pets) do
+			if not v.l and v.nk ~= getgenv().RenameName and not PetsDirectory[v.id].huge and not PetsDirectory[v.id].isPremium and not PetsDirectory[v.id].isGift and v.id == IDToCheck then
+				if (Hardcore and v.hc) or (not Hardcore and not v.hc) and (Shiny and v.sh) or (not Shiny and not v.sh) then
+					if Machine == "Gold" and not v.r and not v.g and not v.dm or Machine == "Rainbow" and v.r or Machine == "Dark Matter" and v.dm then
+						Count = Count + 1
+						table.insert(PetIDs[IDToCheck], v.uid)
+						if #PetIDs[IDToCheck] == ammount then break end
+					end
+				end
+			end
+		end
+	end
+	for i, v in pairs(PetIDs) do
+		if #v ~= ammount then
+			PetIDs[i] = nil
+		end
+	end
+	return PetIDs
+end
+
+getgenv().MachinesSettings = {
+	Golden = {
+		Ammount = 6,
+		Hardcore = false,
+		Shiny = false,
+	},
+	Rainbow = {
+		Ammount = 6,
+		Hardcore = false,
+		Shiny = false,
+	},
+	DarkMatter = {
+		Ammount = 6,
+		Hardcore = false,
+		Shiny = false,
+	}
+}
+spawn(function()
+	while task.wait(1) do
+		if getgenv().AutoGold then
+			for i, v in pairs(GetPetsToConvert("Gold", getgenv().MachinesSettings.Golden.Ammount, getgenv().MachinesSettings.Golden.Hardcore, getgenv().MachinesSettings.Golden.Shiny)) do
+				lib.Network.Invoke("Use Golden Machine", v)
+				task.wait(1)
+			end
+		end
+	end
+end)
+
+spawn(function()
+	while task.wait(1) do
+		if getgenv().AutoRainbow then
+			for i, v in pairs(GetPetsToConvert("Rainbow", getgenv().MachinesSettings.Golden.Ammount, getgenv().MachinesSettings.Golden.Hardcore, getgenv().MachinesSettings.Golden.Shiny)) do
+				lib.Network.Invoke("Use Rainbow Machine", v)
+				task.wait(1)
+			end
+		end
+	end
+end)
+
+spawn(function()
+	local function GetDarkSlots()
+		if table.find(lib.Save.Get().Gamepasses, 18674305) then
+			return lib.Save.Get().DarkMatterSlots + 2
+		else
+			return lib.Save.Get().DarkMatterSlots
+		end
+	end
+	local function GetSizeOfQue()
+		local count = 0
+		for i, v in pairs(lib.Save.Get().DarkMatterQueue) do
+			count = count + 1
+		end
+		return count
+	end
+	local function ClaimAll()
+		for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.DarkMatter.Frame.Queue.Holder:GetChildren()) do
+			if v.ClassName == "Frame" and  v.Claim.Visible  then
+				lib.Network.Invoke("Redeem Dark Matter Pet", v.Name)
+				task.wait(1)
+			end
+		end
+	end
+	while task.wait(1) do
+		if getgenv().AutoDarkMatter then
+			if GetSizeOfQue() ~= GetDarkSlots() then
+				for i, v in pairs(GetPetsToConvert("Dark Matter", getgenv().MachinesSettings.Golden.Ammount, getgenv().MachinesSettings.Golden.Hardcore, getgenv().MachinesSettings.Golden.Shiny)) do
+					lib.Network.Invoke("Convert To Dark Matter", v)
+					task.wait(1)
+				end
+			end
+		end
+		if getgenv().AutoClaimDark then
+			ClaimAll()
+		end
+	end
+end)
+
+function PetIdToName(id)
+	if id ~= nil then
+		if lib.Directory.Pets[id] then
+			return lib.Directory.Pets[id].name
+		else
+			return "Invalid Id"
+		end
+	end
+end
+
+function PetIDToEgg(id)
+	if id ~= nil then
+		for i, v in pairs(lib.Directory.Eggs) do
+			if v.drops and typeof(v.drops) == "table" and v.hatchable then
+				for I, V in pairs(v.drops) do
+					if V[1]== id then
+						return i
+					end
+				end
+			end
+		end
+	end
+end
+
+function TeleportToEgg(egg)
+	teleport.Teleport("")
+end
+
+--Index
+spawn(function()
+	local Idx = {
+		0,
+		2,
+		4,
+		8
+	}
+	local PetsToIndex = {}
+	for i, v in pairs(lib.Directory.Pets) do
+		if not v.IsPremium and v.rarity ~= "Exclusive" and not v.huge and PetIDToEgg(i) ~= nil then
+			for I, V in pairs(Idx) do
+				table.insert(PetsToIndex, {i, V})
+			end
+		end
+	end
+	local MaxPets = #PetsToIndex
+	getgenv().IndexSettings = {
+		AmmountToStop = 1000,
+		WebhookOnFinish = true,
+		Webhook = nil,
+		Bank = "67e7df54-eda9-47d5-8c2b-463d0b763e2c",
+		MaxAmmount = MaxPets
+	}
+	local PlayerBank = lib.Network.Invoke("Get Bank", getgenv().IndexSettings.Bank)
+	local CurrentPets = {}
+	for i,v in pairs(PlayerBank.Storage.Pets) do
+		CurrentPets[v.id] = lib.Shared.PetTypeIndex(v)
+	end
+	local RestPets = {}
+	for i, v in pairs(PetsToIndex) do
+		local isOwned = false
+		for ii, vv in pairs(CurrentPets) do
+			if v[1] == ii and v[2] == vv then
+				isOwned = true
+			end
+		end
+		if not isOwned then
+			table.insert(RestPets, v)
+		end
+	end
+	for i, v in pairs(RestPets) do
+		print(i, v)
+	end
+	while task.wait(0.2) do
+		if getgenv().AutoIndexPets then
+			
+		end
+	end
+end)
+
+
 
 Playerdisplay = game.Players.LocalPlayer.DisplayName
 
@@ -910,7 +1111,6 @@ local Tab = main:CreateTab({
 })
 
 local TabFarm = main:CreateTab({name = "Farming", icon = "rbxassetid://12000177181"})
-
 local TabEgg = main:CreateTab({name = "Eggs"})
 local TabMachines = main:CreateTab({name = "Machines", icon = "rbxassetid://12412304458"})
 local TabMisc = main:CreateTab({name = "Misc", icon = "rbxassetid://12000213750"})
@@ -925,7 +1125,7 @@ local SaveBtn = Tab:Button({
 	callback = function() 
 		main:SaveConfig()
 		CreateSettings()
-end})
+	end})
 
 local FarmingSection = TabFarm:Section({name = "Farming"})
 
@@ -936,11 +1136,11 @@ AutoFarmMode:Add("Deafult")
 AutoFarmMode:Add("Highest Coin Multiplier")
 local AutoFarmArea = FarmingSection:Dropdown({name = "Select Area", deafult = ReadSettings("Select Area"), callback = function(v) getgenv().SelectedArea = (v) end})
 
-local sortedAreas = {}
+local UnSortedTable = {}
 for i, v in pairs(lib.Directory.Areas) do
-	sortedAreas[v.id] = i
+	UnSortedTable[v.id] = v.name
 end
-for i, v in ipairs(sortedAreas) do
+for i, v in pairs(UnSortedTable) do
 	AutoFarmArea:Add(v)
 end
 
@@ -1028,19 +1228,19 @@ local EggDrop = EggSection:Dropdown({
 				EggAvaiable:SetText("Available: "..CalculateAvaiableEggs(getgenv().Egg))
 			end
 		end	
-end})
+	end})
 
 
 spawn(function()
 	while task.wait(1) do
 		if getgenv().Egg then 
-				if game.PlaceId == 10321372166 and lib.Save.Get().Hardcore.EggsOpened[getgenv().Egg] ~= nil  then
-					EggOpened:SetText("Opened: "..lib.Save.Get().Hardcore.EggsOpened[getgenv().Egg])
-					EggAvaiable:SetText("Available: "..CalculateAvaiableEggs(getgenv().Egg))
-				elseif lib.Save.Get().EggsOpened[getgenv().Egg] ~= nil then
-					EggOpened:SetText("Opened: "..lib.Save.Get().EggsOpened[getgenv().Egg])
-					EggAvaiable:SetText("Available: "..CalculateAvaiableEggs(getgenv().Egg))
-				end
+			if game.PlaceId == 10321372166 and lib.Save.Get().Hardcore.EggsOpened[getgenv().Egg] ~= nil  then
+				EggOpened:SetText("Opened: "..lib.Save.Get().Hardcore.EggsOpened[getgenv().Egg])
+				EggAvaiable:SetText("Available: "..CalculateAvaiableEggs(getgenv().Egg))
+			elseif lib.Save.Get().EggsOpened[getgenv().Egg] ~= nil then
+				EggOpened:SetText("Opened: "..lib.Save.Get().EggsOpened[getgenv().Egg])
+				EggAvaiable:SetText("Available: "..CalculateAvaiableEggs(getgenv().Egg))
+			end
 		end
 	end
 end)
@@ -1070,7 +1270,6 @@ for i, v in pairs(lib.Directory.Powers) do
 		end
 	end
 end
-
 local GamepassesSection = TabMisc:Section({name = "Gamepasses"})
 local UnlockGamepasses = GamepassesSection:Button({name = "Unlock Gamepasses", callback = function(v) GetGamepasses() end})
 local InfoGamepasses = GamepassesSection:Label({name = "Most of the gamepasses are just visual such as triple hatch pets equipped and more", icon = false})
@@ -1124,4 +1323,16 @@ local CometFarmingSection = TabFarm:Section({name = "Comet Farming"})
 local AutoFarmComets = CometFarmingSection:Toggle({name = "Auto Farm Comets", deafult = ReadSettings("Auto Farm Comets"), callback = function(v) getgenv().AutoFarmComets = v end})
 local DiscordNotification = CometFarmingSection:Toggle({name = "Send Discord Notification", deafult = ReadSettings("Send Discord Notification"), callback = function(v) getgenv().CometNotify = v end})
 local WebhookTextBox = CometFarmingSection:TextBox({name = "Webhook", deafult = ReadSettings("Webhook"), callback = function(v) getgenv().CometWebhook = v end})
-print("Nigga Script Executed")
+local GoldenMachineSec = TabMachines:Section({name = "Golden Mahine"})
+local AutoGold = GoldenMachineSec:Toggle({name = "Auto Gold", deafult = ReadSettings("Auto Gold"), callback = function(v) getgenv().AutoGold = v end})
+local GoldAmmount = GoldenMachineSec:Slider({
+	name = "Ammount Of Normal Pets",
+	deafult2 = ReadSettings("Ammount Of Normal Pets"),
+	min = 1,
+	deafult = 6,
+	max = 12,
+	callback = function(v) getgenv().MachinesSettings.Golden.Ammount = v end
+})
+local GoldHardcore = GoldenMachineSec:Toggle({name = "Golden Hardcore", deafult = ReadSettings("Golden Hardcore"), callback = function(v) getgenv().MachinesSettings.Golden.Hardcore = v end})
+local GoldShiny = GoldenMachineSec:Toggle({name = "Golden Shiny", deafult = ReadSettings("Golden Shiny"), callback = function(v) getgenv().MachinesSettings.Golden.Shiny = v end})
+print("Nigga Script Executed")	

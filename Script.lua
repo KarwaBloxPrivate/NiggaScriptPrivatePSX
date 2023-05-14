@@ -34,6 +34,7 @@ getgenv().CometNotify = false
 getgenv().CometWebhook = nil
 getgenv().AutoIndexPets = false
 getgenv().AutoGold = false
+getgenv().FarmRateLimit = 0
 
 local SelectedEnchants = {}
 local teleport = getsenv(game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.GUIs.Teleport)
@@ -708,6 +709,7 @@ function FarmCoins(Method, Area, BlacklistedCoins)
 				if Coinid ~= nil then
 					JoinCoin(Coinid, GetPetsTable())
 					FarmCoin(Coinid, GetPetsTable())
+					task.wait(getgenv().FarmRateLimit)
 				end
 			end
 		end

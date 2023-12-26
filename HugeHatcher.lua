@@ -497,7 +497,7 @@ local AreaToFarmFruits
 
 spawn(function()
 	while task.wait(0.8) do
-		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < 200)then
+		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < 200))then
 			if Settings.FarmFruits.FarmOption == "Normal" then
 				if not isfile("BlacklistedAreas.json") then
 					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))

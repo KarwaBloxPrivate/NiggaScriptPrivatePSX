@@ -510,7 +510,7 @@ spawn(function()
 		if isfile("FarmFruits.json") then
 			FarmFruits = HttpService:JSONDecode(readfile("FarmFruits.json"))
 		end
-		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (FarmFruits == "true" or FarmFruits == nil))) then
+		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (FarmFruits == "true" or FarmFruits == nil)) then
 			if Settings.FarmFruits.FarmOption == "Normal" then
 				if not isfile("BlacklistedAreas.json") then
 					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))

@@ -497,7 +497,17 @@ local AreaToFarmFruits
 
 spawn(function()
 	while task.wait(0.8) do
-		if Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then
+		if not isfile("FarmFruits.json") then
+			if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
+				writefile("FarmFruits.json", "false")
+			end
+
+			if GetFruitAmmount(lib.Directory.Fruits.Banana) < 150 then
+				writefile("FarmFruits.json", "true")
+			end
+		end
+		local FarmFruits = HttpService:JSONDecode(readfile("FarmFruits.json"))
+		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (HttpService:JSONDecode(readfile("FarmFruits.json")))) then
 			if Settings.FarmFruits.FarmOption == "Normal" then
 				if not isfile("BlacklistedAreas.json") then
 					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))
@@ -605,7 +615,13 @@ spawn(function()
 				end
 
 				task.wait(0.5)
-
+				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
+					writefile("FarmFruits.json", "false")
+				end
+	
+				if GetFruitAmmount(lib.Directory.Fruits.Banana) < 150 then
+					writefile("FarmFruits.json", "true")
+				end
 				UpdateServers()
 				for i, v in pairs(Servers) do
 					print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")

@@ -87,10 +87,6 @@ local BlacklistedAreas = {
 }
 
 local BlacklistedFruits = {
-	"Banana",
-	"Apple",
-	"Pineapple",
-	"Pear"
 }
 
 repeat task.wait() until game:IsLoaded()

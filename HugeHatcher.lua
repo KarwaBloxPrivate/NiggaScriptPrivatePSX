@@ -503,7 +503,9 @@ spawn(function()
 					else
 						print(ScriptLog.."It Really Isnt")
 					end
-			elseif Settings.FarmFruits.FarmOption == "Server Hop" then
+				end
+			end
+			if Settings.FarmFruits.FarmOption == "Server Hop" then
 				UpdateServers()
 				print(ScriptLog.."Teleporting To "..Servers[1].data.id.." With "..Servers[1].data.ping.." Ping".." And "..Servers[1].data.playing.."/"..Servers[1].data.maxPlayers.." Players")
 				TeleportService:TeleportToPlaceInstance(game.PlaceId, Servers[1].data.id, LocalPlayer)

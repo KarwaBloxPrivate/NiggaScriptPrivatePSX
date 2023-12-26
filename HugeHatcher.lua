@@ -577,6 +577,19 @@ spawn(function()
 					if lib.WorldCmds.Get() ~= v then
 						lib.WorldCmds.Load(v)
 					end
+					local StartTime = tick()
+					while task.wait() do
+						if lib.WorldCmds.HasLoaded() then break end
+						if Tick() - StartTime > 60 then
+							UpdateServers()
+							for i, v in pairs(Servers) do
+								print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")
+								TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id, LocalPlayer)
+								task.wait(1.4)
+								break
+							end
+						end
+					end
 					repeat task.wait() until lib.WorldCmds.HasLoaded()
 					for ii, vv in pairs(lib.Network.Invoke("Get Coins")) do
 						if table.find(Fruits, vv.n) and not table.find(AreasWithFruits, vv.a) then

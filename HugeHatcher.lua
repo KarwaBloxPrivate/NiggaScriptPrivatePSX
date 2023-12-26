@@ -497,20 +497,7 @@ local AreaToFarmFruits
 
 spawn(function()
 	while task.wait(0.8) do
-		if not isfile("FarmFruits.json") then
-			if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
-				writefile("FarmFruits.json", "false")
-			end
-
-			if GetFruitAmmount(lib.Directory.Fruits.Banana) < 150 then
-				writefile("FarmFruits.json", "true")
-			end
-		end
-		local FarmFruits
-		if isfile("FarmFruits.json") then
-			FarmFruits = HttpService:JSONDecode(readfile("FarmFruits.json"))
-		end
-		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (FarmFruits == "true" or FarmFruits == nil)) then
+		if (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Normal" and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (Settings.FarmFruits.Farm and Settings.FarmFruits.FarmOption == "Server Hop" and (GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount) or (GetFruitAmmount(lib.Directory.Fruits.Banana) < 200)) then
 			if Settings.FarmFruits.FarmOption == "Normal" then
 				if not isfile("BlacklistedAreas.json") then
 					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))
@@ -634,7 +621,19 @@ spawn(function()
 				end
 			end
 		end
-		if GetAvailableEggs(EggToTeleport) <= Settings.HatchWhenSelectedAmountEggsAvailable then
+		function CheckForFruits()
+			if not Settings.FarmFruits.Farm then
+				return true
+			end
+			if Settings.FarmFruits.Farm then
+				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
+					return true
+				else
+					return false
+				end
+			end
+		end
+		if GetAvailableEggs(EggToTeleport) <= Settings.HatchWhenSelectedAmountEggsAvailable and CheckForFruits() then
 			getgenv().HatchingEgg = false
 			print(ScriptLog.."Not Enough Eggs Available Farming Coins")
 			repeat task.wait() until lib.WorldCmds.HasLoaded()
@@ -662,18 +661,6 @@ spawn(function()
 			end
 		end
 		local checkforeggs = GetAvailableEggs(EggToTeleport) >= Settings.HatchWhenSelectedAmountEggsAvailable
-		function CheckForFruits()
-			if not Settings.FarmFruits.Farm then
-				return true
-			end
-			if Settings.FarmFruits.Farm then
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
-					return true
-				else
-					return false
-				end
-			end
-		end
 		local checkforfruits = CheckForFruits()
 		local checkforalreadyhatching = getgenv().HatchingEgg
 		print(checkforeggs, checkforfruits, checkforalreadyhatching)

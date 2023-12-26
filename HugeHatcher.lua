@@ -584,9 +584,9 @@ spawn(function()
 						end
 						if vv.a == CurrentArea and table.find(Fruits, vv.n) then
 							print("Farming "..vv.n.." Fruit")
-							lib.Network.Invoke("Join Coin", v.ID, GetEquipped())
+							lib.Network.Invoke("Join Coin", ii, GetEquipped())
 							for I, V in pairs(GetEquipped()) do
-								lib.Network.Fire("Farm Coin", v.ID, V)
+								lib.Network.Fire("Farm Coin", ii, V)
 							end
 						end
 					end

@@ -507,9 +507,12 @@ spawn(function()
 			end
 			if Settings.FarmFruits.FarmOption == "Server Hop" then
 				UpdateServers()
-				print(ScriptLog.."Teleporting To "..Servers[1].data.id.." With "..Servers[1].data.ping.." Ping".." And "..Servers[1].data.playing.."/"..Servers[1].data.maxPlayers.." Players")
-				TeleportService:TeleportToPlaceInstance(game.PlaceId, Servers[1].data.id, LocalPlayer)
-				task.wait(1.4)
+				for i, v in pairs(Servers) do
+					print(ScriptLog.."Teleporting To "..v.data.id.." With "..v.data.ping.." Ping".." And "..v.data.playing.."/"..v.data.maxPlayers.." Players")
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, v.data.id, LocalPlayer)
+					task.wait(1.4)
+					break
+				end
 			end
 		end
 		if GetAvailableEggs(EggToTeleport) <= Settings.HatchWhenSelectedAmountEggsAvailable then

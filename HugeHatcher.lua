@@ -508,6 +508,7 @@ spawn(function()
 			if Settings.FarmFruits.FarmOption == "Server Hop" then
 				UpdateServers()
 				for i, v in pairs(Servers) do
+					print(i, v)
 					print(ScriptLog.."Teleporting To "..v.data.id.." With "..v.data.ping.." Ping".." And "..v.data.playing.."/"..v.data.maxPlayers.." Players")
 					TeleportService:TeleportToPlaceInstance(game.PlaceId, v.data.id, LocalPlayer)
 					task.wait(1.4)

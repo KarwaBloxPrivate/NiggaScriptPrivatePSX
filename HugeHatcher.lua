@@ -66,6 +66,7 @@ local BlacklistedWorlds = {
 	"Summer Event",
 	"Yeet",
 	"Halloween Event",
+	"Limbo"
 }
 
 local BlacklistedAreas = {

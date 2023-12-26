@@ -14,6 +14,7 @@
 local Settings = {
 	FarmFruits = {
 		Farm = true,
+		FarmOption = "Server Hop", --Normal | Server Hop
 		MinAmount = 150,
 		MaxAmount = 200
 	},
@@ -73,6 +74,33 @@ end
 task.wait(5)
 
 local lib = require(game:GetService("ReplicatedStorage"):WaitForChild("Library"))
+
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+
+local Servers = {}
+
+function UpdateServers()
+	print(ScriptLog.."Getting Servers...")
+	local url = 'https://games.roblox.com/v1/games/' .. game.PlaceId .. '/servers/Public?sortOrder=Asc&limit=100'
+	local success, result = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet(url))
+	end)
+	if success then
+		for i, v in pairs(result.data) do
+			if v.playing > 0 and v.playing < v.maxPlayers then
+				Servers[i] = v
+			end
+		end
+		for i = #Servers, 2, -1 do
+			local j = math.random(i)
+			Servers[i], Servers[j] = Servers[j], Servers[i]
+		end
+		print(ScriptLog.."Got Servers")
+	else
+		print(ScriptLog.."Failed To Get Servers")
+	end
+end
 
 if not getgenv().HookedAntiCheat then
 	local functions = lib.Network.Fire, lib.Network.Invoke
@@ -429,50 +457,57 @@ local AreaToFarmFruits
 spawn(function()
 	while task.wait(0.8) do
 		if Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then
-			if not isfile("BlacklistedAreas.json") then
-				writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))
-			else
-				json = readfile("BlacklistedAreas.json")
-				BlacklistedAreas = game:GetService("HttpService"):JSONDecode(json)
-			end
-			for i, v in pairs(Areas) do
-				if not table.find(BlacklistedAreas, v) then
-					AreaToFarmFruits = v
-					table.insert(BlacklistedAreas, AreaToFarmFruits)
-					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas)) 
-					break
+			if Settings.FarmFruits.FarmOption == "Normal" then
+				if not isfile("BlacklistedAreas.json") then
+					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))
+				else
+					json = readfile("BlacklistedAreas.json")
+					BlacklistedAreas = game:GetService("HttpService"):JSONDecode(json)
 				end
-			end		
-			if AreaToFarmFruits ~= nil then	
-				getgenv().HatchingEgg = false
-				print(ScriptLog.."Amount Of Banana Fruits Is Too Low Farming Fruits")
-				repeat task.wait() until lib.WorldCmds.HasLoaded()
-				print(ScriptLog.."Double Checking If Its Really Too Low")
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then
-					print(ScriptLog.."It Really Is")
+				for i, v in pairs(Areas) do
+					if not table.find(BlacklistedAreas, v) then
+						AreaToFarmFruits = v
+						table.insert(BlacklistedAreas, AreaToFarmFruits)
+						writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas)) 
+						break
+					end
+				end		
+				if AreaToFarmFruits ~= nil then	
+					getgenv().HatchingEgg = false
+					print(ScriptLog.."Amount Of Banana Fruits Is Too Low Farming Fruits")
 					repeat task.wait() until lib.WorldCmds.HasLoaded()
-					Teleport.Teleport(AreaToFarmFruits, true)
-					task.wait(0.3)
-					while task.wait(0.1) do
-						local UsedIds = {}
-						for i, v in pairs(lib.Network.Invoke("Get Coins")) do
-							if v.a == AreaToFarmFruits then
-								for I, V in pairs(GetEquipped()) do
-									if not table.find(UsedIds, V) then
-										lib.Network.Invoke("Join Coin", i, {V})
-										lib.Network.Fire("Farm Coin", i, V)
-										table.insert(UsedIds, V)
-										task.wait(0.02)
-										break
+					print(ScriptLog.."Double Checking If Its Really Too Low")
+					if GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then
+						print(ScriptLog.."It Really Is")
+						repeat task.wait() until lib.WorldCmds.HasLoaded()
+						Teleport.Teleport(AreaToFarmFruits, true)
+						task.wait(0.3)
+						while task.wait(0.1) do
+							local UsedIds = {}
+							for i, v in pairs(lib.Network.Invoke("Get Coins")) do
+								if v.a == AreaToFarmFruits then
+									for I, V in pairs(GetEquipped()) do
+										if not table.find(UsedIds, V) then
+											lib.Network.Invoke("Join Coin", i, {V})
+											lib.Network.Fire("Farm Coin", i, V)
+											table.insert(UsedIds, V)
+											task.wait(0.02)
+											break
+										end
 									end
 								end
+								if #UsedIds == #GetEquipped() then break end
 							end
-							if #UsedIds == #GetEquipped() then break end
+							if GetFruitAmmount(lib.Directory.Fruits.Banana) >= Settings.FarmFruits.MaxAmount then print(ScriptLog.."Maxed Fruits") RemoveOptionByValue(BlacklistedAreas, AreaToFarmFruits) writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas)) break end
 						end
-						if GetFruitAmmount(lib.Directory.Fruits.Banana) >= Settings.FarmFruits.MaxAmount then print(ScriptLog.."Maxed Fruits") RemoveOptionByValue(BlacklistedAreas, AreaToFarmFruits) writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas)) break end
+					else
+						print(ScriptLog.."It Really Isnt")
 					end
-				else
-					print(ScriptLog.."It Really Isnt")
+				elseif Settings.FarmFruits.FarmOption == "Server Hop" then
+					UpdateServers()
+					print(ScriptLog.."Teleporting To "..Servers[1].data.id.." With "..Servers[1].data.ping.." Ping".." And "..Servers[1].data.playing.."/"..Servers[1].data.maxPlayers.." Players")
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, Servers[1].data.id, LocalPlayer)
+					task.wait(1.4)
 				end
 			end
 		end

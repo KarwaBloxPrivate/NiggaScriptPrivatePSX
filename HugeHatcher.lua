@@ -13,7 +13,7 @@
 
 local Settings = {
 	FarmFruits = {
-		Farm = true,
+		Farm = false,
 		MinAmount = 150,
 		MaxAmount = 200
 	},

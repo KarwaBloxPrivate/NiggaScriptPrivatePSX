@@ -667,7 +667,7 @@ spawn(function()
 				return true
 			end
 			if Settings.FarmFruits.Farm then
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) > Settings.FarmFruits.MinAmount then
+				if FarmFruits == "false" then
 					return true
 				else
 					return false

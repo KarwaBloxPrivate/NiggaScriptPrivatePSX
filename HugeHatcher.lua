@@ -60,10 +60,12 @@ local Settings = {
 }
 
 local BlacklistedWorlds = {
-	"Kawaii",
-	"Doodle",
 	"Diamond Mine",
-	"Dog"
+	"Dog",
+	"Void",
+	"Summer Event",
+	"Yeet",
+	"Halloween Event",
 }
 
 local BlacklistedAreas = {

@@ -59,6 +59,37 @@ local Settings = {
 	Stop = false
 }
 
+local BlacklistedWorlds = {
+	"Kawaii",
+	"Doodle",
+	"Diamond Mine",
+	"Dog"
+}
+
+local BlacklistedAreas = {
+	"VIP",
+	"Portals",
+	"Cat Throne Room",
+	"Secret House",
+	"Secret Vault",
+	"Doodle Barn",
+	"Steampunk Chest",
+	"Alien Chest",
+	"Limbo",
+	"Shop",
+	"Fantasy Shop",
+	"Tech Shop",
+	"The Void",
+	"Tech Entry"
+}
+
+local BlacklistedFruits = {
+	"Banana",
+	"Apple",
+	"Pineapple",
+	"Pear"
+}
+
 repeat task.wait() until game:IsLoaded()
 
 local ScriptLog = "[Karwa's Scripts Huge Hatcher] "
@@ -99,6 +130,17 @@ function UpdateServers()
 		print(ScriptLog.."Got Servers")
 	else
 		print(ScriptLog.."Failed To Get Servers")
+	end
+end
+
+function RemoveValueFromTable(tbl, value)
+	local i = 1
+	while i <= #tbl do
+		if tbl[i] == value then
+			table.remove(tbl, i)
+		else
+			i = i + 1
+		end
 	end
 end
 
@@ -506,9 +548,54 @@ spawn(function()
 				end
 			end
 			if Settings.FarmFruits.FarmOption == "Server Hop" then
+				local Fruits = {}
+				for i, v in pairs(lib.Directory.Fruits) do
+					if not table.find(BlacklistedFruits, i) then
+						table.insert(Fruits, v.Coin)
+					end
+				end
+
+				local Areas = {}
+				for i, v in pairs(lib.Directory.Areas) do
+					if not v.hidden and not table.find(BlacklistedAreas, v.name) and not table.find(BlacklistedWorlds, v.world) then
+						Areas[v.id] = i
+					end
+				end
+
+				local Worlds = {}
+				for i, v in pairs(lib.Directory.Areas) do
+					if not v.hidden and not table.find(BlacklistedAreas, v.name) and not table.find(BlacklistedWorlds, v.world) and not table.find(Worlds, v.world) then
+						table.insert(Worlds, v.world)
+					end
+				end
+
+				local CurrentArea
+				local AreasWithFruits = {}
+				for i, v in pairs(Worlds) do
+					if lib.WorldCmds.Get() ~= v then
+						lib.WorldCmds.Load(v)
+					end
+					repeat task.wait() until lib.WorldCmds.HasLoaded()
+					for ii, vv in pairs(lib.Network.Invoke("Get Coins")) do
+						if table.find(Fruits, vv.n) and not table.find(AreasWithFruits, vv.a) then
+							CurrentArea = vv.a
+							Teleport.Teleport(vv.a, true)
+							table.insert(AreasWithFruits, vv.a)
+						end
+						if vv.a == CurrentArea and table.find(Fruits, vv.n) then
+							print("Farming "..vv.n.." Fruit")
+							lib.Network.Invoke("Join Coin", v.ID, GetEquipped())
+							for I, V in pairs(GetEquipped()) do
+								lib.Network.Fire("Farm Coin", v.ID, V)
+							end
+						end
+					end
+				end
+
+				task.wait(0.5)
+
 				UpdateServers()
 				for i, v in pairs(Servers) do
-					print(i, v)
 					print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")
 					TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id, LocalPlayer)
 					task.wait(1.4)

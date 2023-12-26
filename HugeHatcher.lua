@@ -580,7 +580,7 @@ spawn(function()
 					local StartTime = tick()
 					while task.wait() do
 						if lib.WorldCmds.HasLoaded() then break end
-						if Tick() - StartTime > 60 then
+						if tick() - StartTime > 60 then
 							UpdateServers()
 							for i, v in pairs(Servers) do
 								print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")

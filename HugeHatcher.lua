@@ -453,7 +453,7 @@ spawn(function()
 					repeat task.wait() until lib.WorldCmds.HasLoaded()
 					Teleport.Teleport(AreaToFarmFruits, true)
 					task.wait(0.3)
-					while task.wait(0.2) do
+					while task.wait(0.1) do
 						local UsedIds = {}
 						for i, v in pairs(lib.Network.Invoke("Get Coins")) do
 							if v.a == AreaToFarmFruits then

@@ -497,7 +497,61 @@ local AreaToFarmFruits
 
 spawn(function()
 	while task.wait(0.8) do
-		if (Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < 200) then
+		function CheckForFruits()
+			if not Settings.FarmFruits.Farm then
+				return true
+			end
+			if Settings.FarmFruits.Farm then
+				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
+					return true
+				else
+					return false
+				end
+			end
+		end
+		if GetAvailableEggs(EggToTeleport) <= Settings.HatchWhenSelectedAmountEggsAvailable then
+			getgenv().HatchingEgg = false
+			print(ScriptLog.."Not Enough Eggs Available Farming Coins")
+			repeat task.wait() until lib.WorldCmds.HasLoaded()
+			Teleport.Teleport(AreaToFarm, true)
+			while task.wait(0.05) do
+				local Coins = {}
+				for i, v in pairs(lib.Network.Invoke("Get Coins")) do
+					if v.a == AreaToFarm then
+						v.ID = i
+						v.Mult = (v.b and v.b.l[1].m) or (0)
+						table.insert(Coins, v)
+					end
+				end
+				table.sort(Coins, function(a, b) return a.Mult > b.Mult end)
+				for i, v in pairs(Coins) do
+					if v.a == AreaToFarm then
+						lib.Network.Invoke("Join Coin", v.ID, GetEquipped())
+						for I, V in pairs(GetEquipped()) do
+							lib.Network.Fire("Farm Coin", v.ID, V)
+						end
+						break
+					end
+				end
+				if GetAvailableEggs(EggToTeleport) >= Settings.HatchWhenSelectedAmountEggsAvailable then print(ScriptLog.."Got Enough Eggs Available") break end
+			end
+		end
+		local checkforeggs = GetAvailableEggs(EggToTeleport) >= Settings.HatchWhenSelectedAmountEggsAvailable
+		local checkforfruits = CheckForFruits()
+		local checkforalreadyhatching = getgenv().HatchingEgg
+		print(checkforeggs, checkforfruits, checkforalreadyhatching)
+		if checkforeggs and checkforfruits and not checkforalreadyhatching then
+			print(ScriptLog.."Teleporting To "..EggToTeleport)
+			repeat task.wait() until lib.WorldCmds.HasLoaded()
+			TeleportToEgg(EggToTeleport)
+			print(ScriptLog.."Hatching "..EggToTeleport)
+			while task.wait(2.2) do
+				getgenv().HatchingEgg = true
+				lib.Network.Invoke("Buy Egg", EggToTeleport, Settings.EggSettings.triple, Settings.EggSettings.octuple)
+				if GetAvailableEggs(EggToTeleport) <= 20 or Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then getgenv().HatchingEgg = false break end
+			end
+		end
+		if Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) != 200 then
 				if not isfile("BlacklistedAreas.json") then
 					writefile("BlacklistedAreas.json", game:GetService("HttpService"):JSONEncode(BlacklistedAreas))
 				else
@@ -602,76 +656,15 @@ spawn(function()
 						end
 					end
 				end
-
-				task.wait(0.5)
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
-					writefile("FarmFruits.json", "false")
-				end
-	
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) < 150 then
-					writefile("FarmFruits.json", "true")
-				end
-				UpdateServers()
-				for i, v in pairs(Servers) do
-					print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")
-					TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id, LocalPlayer)
-					task.wait(1.4)
-					break
-				end
-			end
-		end
-		function CheckForFruits()
-			if not Settings.FarmFruits.Farm then
-				return true
-			end
-			if Settings.FarmFruits.Farm then
-				if GetFruitAmmount(lib.Directory.Fruits.Banana) == 200 then
-					return true
-				else
-					return false
-				end
-			end
-		end
-		if GetAvailableEggs(EggToTeleport) <= Settings.HatchWhenSelectedAmountEggsAvailable and CheckForFruits() then
-			getgenv().HatchingEgg = false
-			print(ScriptLog.."Not Enough Eggs Available Farming Coins")
-			repeat task.wait() until lib.WorldCmds.HasLoaded()
-			Teleport.Teleport(AreaToFarm, true)
-			while task.wait(0.05) do
-				local Coins = {}
-				for i, v in pairs(lib.Network.Invoke("Get Coins")) do
-					if v.a == AreaToFarm then
-						v.ID = i
-						v.Mult = (v.b and v.b.l[1].m) or (0)
-						table.insert(Coins, v)
-					end
-				end
-				table.sort(Coins, function(a, b) return a.Mult > b.Mult end)
-				for i, v in pairs(Coins) do
-					if v.a == AreaToFarm then
-						lib.Network.Invoke("Join Coin", v.ID, GetEquipped())
-						for I, V in pairs(GetEquipped()) do
-							lib.Network.Fire("Farm Coin", v.ID, V)
-						end
+				if GetFruitAmmount(lib.Directory.Fruits.Banana) != 200 then
+					UpdateServers()
+					for i, v in pairs(Servers) do
+						print(ScriptLog.."Teleporting To "..v.id.." With "..v.ping.." Ping".." And "..v.playing.."/"..v.maxPlayers.." Players")
+						TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id, LocalPlayer)
+						task.wait(1.4)
 						break
 					end
 				end
-				if GetAvailableEggs(EggToTeleport) >= Settings.HatchWhenSelectedAmountEggsAvailable then print(ScriptLog.."Got Enough Eggs Available") break end
-			end
-		end
-		local checkforeggs = GetAvailableEggs(EggToTeleport) >= Settings.HatchWhenSelectedAmountEggsAvailable
-		local checkforfruits = CheckForFruits()
-		local checkforalreadyhatching = getgenv().HatchingEgg
-		print(checkforeggs, checkforfruits, checkforalreadyhatching)
-		if checkforeggs and checkforfruits and not checkforalreadyhatching then
-			print(ScriptLog.."Teleporting To "..EggToTeleport)
-			repeat task.wait() until lib.WorldCmds.HasLoaded()
-			TeleportToEgg(EggToTeleport)
-			print(ScriptLog.."Hatching "..EggToTeleport)
-			while task.wait(2.2) do
-				getgenv().HatchingEgg = true
-				lib.Network.Invoke("Buy Egg", EggToTeleport, Settings.EggSettings.triple, Settings.EggSettings.octuple)
-				if GetAvailableEggs(EggToTeleport) <= 20 or Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then getgenv().HatchingEgg = false break end
 			end
 		end
 	end

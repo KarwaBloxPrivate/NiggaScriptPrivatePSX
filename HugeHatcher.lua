@@ -13,7 +13,7 @@
 
 local Settings = {
 	FarmFruits = {
-		Farm = false,
+		Farm = true,
 		MinAmount = 150,
 		MaxAmount = 200
 	},
@@ -49,8 +49,8 @@ local Settings = {
 		SuperLucky = true,
 	},
 	Optimization = {
-		FpsCap = 10,
-		Disable3dRenderingOnAltTab = false,
+		FpsCap = 20,
+		Disable3dRenderingOnAltTab = true,
 		ChangeBackTo60FpsOnTabbed = false
 	},
 	BlacklistedUsers = {

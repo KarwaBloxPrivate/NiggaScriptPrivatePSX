@@ -50,7 +50,7 @@ local Settings = {
 	},
 	Optimization = {
 		FpsCap = 20,
-		Disable3dRenderingOnAltTab = true,
+		Disable3dRenderingOnAltTab = false,
 		ChangeBackTo60FpsOnTabbed = false
 	},
 	BlacklistedUsers = {

@@ -21,7 +21,7 @@ local Settings = {
 	EggSettings = {
 		triple = false,
 		octuple = true,
-		DisableEggAnim = false
+		DisableEggAnim = true
 	},
 	AreaToFarm = "AreaOfEgg", -- AreaOfEgg is gonna farm Area that egg is in or just the area
 	EggToHatch = "Barn Doodle Egg", --Newest one with huge is gonna get the newest egg that has huge in it and hatch it or you can select any egg you want

@@ -113,29 +113,29 @@ local Servers = {}
 function UpdateServers()
 	local scs = false
 	while task.wait(0.1) do
-	print(ScriptLog.."Getting Servers...")
-	local url = 'https://games.roblox.com/v1/games/' .. game.PlaceId .. '/servers/Public?sortOrder=Asc&limit=100'
-	local success, result = pcall(function()
-		return HttpService:JSONDecode(game:HttpGet(url))
-	end)
-	if success and result and result.data ~= nil then
-		for i, v in pairs(result.data) do
-			if v.playing > 0 and v.playing < v.maxPlayers then
-				Servers[i] = v
+		print(ScriptLog.."Getting Servers...")
+		local url = 'https://games.roblox.com/v1/games/' .. game.PlaceId .. '/servers/Public?sortOrder=Asc&limit=100'
+		local success, result = pcall(function()
+			return HttpService:JSONDecode(game:HttpGet(url))
+		end)
+		if success and result and result.data ~= nil then
+			for i, v in pairs(result.data) do
+				if v.playing > 0 and v.playing < v.maxPlayers then
+					Servers[i] = v
+				end
 			end
+			for i = #Servers, 2, -1 do
+				local j = math.random(i)
+				Servers[i], Servers[j] = Servers[j], Servers[i]
+			end
+			print(ScriptLog.."Got Servers")
+			scs = true 
+			break
+		else
+			print(ScriptLog.."Failed To Get Servers Retrying")
+			task.wait(0.1)
 		end
-		for i = #Servers, 2, -1 do
-			local j = math.random(i)
-			Servers[i], Servers[j] = Servers[j], Servers[i]
-		end
-		print(ScriptLog.."Got Servers")
-		scs = true 
-		break
-	else
-		print(ScriptLog.."Failed To Get Servers Retrying")
-		task.wait(0.1)
 	end
-end
 end
 
 function RemoveValueFromTable(tbl, value)

@@ -112,7 +112,7 @@ local Servers = {}
 
 function UpdateServers()
 	local scs = false
-	while not scs then
+	while task.wait(0.1) then
 		print(ScriptLog.."Getting Servers...")
 		local url = 'https://games.roblox.com/v1/games/' .. game.PlaceId .. '/servers/Public?sortOrder=Asc&limit=100'
 		local success, result = pcall(function()

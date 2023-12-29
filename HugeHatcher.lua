@@ -524,7 +524,7 @@ spawn(function()
 					print(ScriptLog.."Amount Of Banana Fruits Is Too Low Farming Fruits")
 					repeat task.wait() until lib.WorldCmds.HasLoaded()
 					print(ScriptLog.."Double Checking If Its Really Too Low")
-					if GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then
+					if GetFruitAmmount(lib.Directory.Fruits.Banana) < 200 then
 						print(ScriptLog.."It Really Is")
 						repeat task.wait() until lib.WorldCmds.HasLoaded()
 						Teleport.Teleport(AreaToFarmFruits, true)

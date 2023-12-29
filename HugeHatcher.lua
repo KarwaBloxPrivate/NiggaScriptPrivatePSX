@@ -14,7 +14,7 @@
 local Settings = {
 	FarmFruits = {
 		Farm = true,
-		FarmOption = "Server Hop", --Normal | Server Hop
+		FarmOption = "Normal", --Normal | Server Hop
 		MinAmount = 150,
 		MaxAmount = 200
 	},
@@ -538,7 +538,6 @@ spawn(function()
 											lib.Network.Invoke("Join Coin", i, {V})
 											lib.Network.Fire("Farm Coin", i, V)
 											table.insert(UsedIds, V)
-											task.wait(0.02)
 											break
 										end
 									end

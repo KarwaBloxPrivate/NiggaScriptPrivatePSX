@@ -39,19 +39,19 @@ local Settings = {
 		SaveSecrets = false,
 	},
 	Boosts = {
-		TripleDamage = true,
-		TripleCoins = true,
-		SuperLucky = true,
-		UltaryLucky = true
+		TripleDamage = false,
+		TripleCoins = false,
+		SuperLucky = false,
+		UltaryLucky = false
 	},
 	ServerBoosts = {
-		TripleCoins = true,
-		TripleDamage = true,
-		SuperLucky = true,
+		TripleCoins = false,
+		TripleDamage = false,
+		SuperLucky = false,
 	},
 	Optimization = {
 		FpsCap = 20,
-		Disable3dRenderingOnAltTab = false,
+		Disable3dRenderingOnAltTab = true,
 		ChangeBackTo60FpsOnTabbed = false
 	},
 	BlacklistedUsers = {

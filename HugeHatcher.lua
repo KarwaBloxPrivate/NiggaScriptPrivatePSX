@@ -446,7 +446,9 @@ if not getgenv().ListeningToPetsHatched then
 							end
 							AssetId = string.gsub(AssetId, "rbxassetid://", "")
 							local String = "https://thumbnails.roblox.com/v1/assets?assetIds="..AssetId.."&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false"
-							Image = game:GetService("HttpService"):JSONDecode(game:HttpGet(String))
+                            local suc, res = pcall(function()
+							    Image = game:GetService("HttpService"):JSONDecode(game:HttpGet(String))
+                            end)
 							local shiny = v.sh and "true" or not v.sh and "false"
 							local Data = {
 								content = nil,
@@ -455,7 +457,7 @@ if not getgenv().ListeningToPetsHatched then
 									description = "**Chance: "..Info.Chance.."**\n**Variant: "..Info.Variant.."**\n**Shiny: "..shiny.."**\n**Egg: "..GetEggById(v.id).."**\n**Opened Egg: "..GetEggsOpened(GetEggById(v.id)).." Times**",
 									color = 5814783,
 									thumbnail = {
-										url = Image.data[1].imageUrl
+										url = Image.data[1].imageUrl or "https://pbs.twimg.com/media/F_YeEFyXkAE5CDQ?format=jpg&name=small"
 									},
 									footer = {
 										text = game.Players.LocalPlayer.Name

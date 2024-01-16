@@ -449,6 +449,7 @@ if not getgenv().ListeningToPetsHatched then
                             local suc, res = pcall(function()
 							    Image = game:GetService("HttpService"):JSONDecode(game:HttpGet(String))
                             end)
+                            local ImageUrl = suc and Image.data[1].imageUrl or "https://pbs.twimg.com/media/F_YeEFyXkAE5CDQ?format=jpg&name=small"
 							local shiny = v.sh and "true" or not v.sh and "false"
 							local Data = {
 								content = nil,
@@ -457,7 +458,7 @@ if not getgenv().ListeningToPetsHatched then
 									description = "**Chance: "..Info.Chance.."**\n**Variant: "..Info.Variant.."**\n**Shiny: "..shiny.."**\n**Egg: "..GetEggById(v.id).."**\n**Opened Egg: "..GetEggsOpened(GetEggById(v.id)).." Times**",
 									color = 5814783,
 									thumbnail = {
-										url = Image.data[1].imageUrl or "https://pbs.twimg.com/media/F_YeEFyXkAE5CDQ?format=jpg&name=small"
+										url = ImageUrl
 									},
 									footer = {
 										text = game.Players.LocalPlayer.Name

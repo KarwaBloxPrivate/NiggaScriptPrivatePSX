@@ -14,7 +14,7 @@
 local Settings = {
 	FarmFruits = {
 		Farm = true,
-		FarmOption = "Server Hop", --Normal | Server Hop
+		FarmOption = "Normal", --Normal | Server Hop
 		MinAmount = 150,
 		MaxAmount = 200
 	},

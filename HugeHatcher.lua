@@ -50,8 +50,8 @@ local Settings = {
 		SuperLucky = true,
 	},
 	Optimization = {
-		FpsCap = 20,
-		Disable3dRenderingOnAltTab = true,
+		FpsCap = 60,
+		Disable3dRenderingOnAltTab = false,
 		ChangeBackTo60FpsOnTabbed = false
 	},
 	BlacklistedUsers = {

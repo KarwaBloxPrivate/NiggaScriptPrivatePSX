@@ -41,13 +41,13 @@ local Settings = {
 	Boosts = {
 		TripleDamage = true,
 		TripleCoins = true,
-		SuperLucky = true,
-		UltaryLucky = true
+		SuperLucky = false,
+		UltaryLucky = false
 	},
 	ServerBoosts = {
-		TripleCoins = true,
-		TripleDamage = true,
-		SuperLucky = true,
+		TripleCoins = false,
+		TripleDamage = false,
+		SuperLucky = false,
 	},
 	Optimization = {
 		FpsCap = 60,

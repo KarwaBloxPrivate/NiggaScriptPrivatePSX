@@ -47,7 +47,7 @@ local Settings = {
 	ServerBoosts = {
 		TripleCoins = false,
 		TripleDamage = false,
-		SuperLucky = false,
+		SuperLucky = true,
 	},
 	Optimization = {
 		FpsCap = 60,
@@ -677,9 +677,11 @@ spawn(function()
 			repeat task.wait() until lib.WorldCmds.HasLoaded()
 			TeleportToEgg(EggToTeleport)
 			print(ScriptLog.."Hatching "..EggToTeleport)
-			while task.wait(2.2) do
+			while task.wait(2.29) do
 				getgenv().HatchingEgg = true
-				lib.Network.Invoke("Buy Egg", EggToTeleport, Settings.EggSettings.triple, Settings.EggSettings.octuple)
+				spawn(function()
+					lib.Network.Invoke("Buy Egg", EggToTeleport, Settings.EggSettings.triple, Settings.EggSettings.octuple)
+				end)
 				if GetAvailableEggs(EggToTeleport) <= 20 or Settings.FarmFruits.Farm and GetFruitAmmount(lib.Directory.Fruits.Banana) < Settings.FarmFruits.MinAmount then getgenv().HatchingEgg = false break end
 			end
 		end

@@ -41,8 +41,8 @@ local Settings = {
 	Boosts = {
 		TripleDamage = true,
 		TripleCoins = true,
-		SuperLucky = false,
-		UltaryLucky = false
+		SuperLucky = true,
+		UltaryLucky = true
 	},
 	ServerBoosts = {
 		TripleCoins = false,

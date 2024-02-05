@@ -50,7 +50,7 @@ local Settings = {
 		SuperLucky = true,
 	},
 	Optimization = {
-		FpsCap = 10,
+		FpsCap = 25,
 		Disable3dRenderingOnAltTab = true,
 		ChangeBackTo60FpsOnTabbed = false
 	},

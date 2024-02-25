@@ -15,7 +15,7 @@ local Settings = {
 	Log = false,
 	Optimization = {
 		FpsCap = 10,
-		Disable3dRendering = true
+		Disable3dRendering = false
 	}
 }
 

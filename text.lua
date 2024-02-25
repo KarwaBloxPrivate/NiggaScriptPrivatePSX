@@ -15,7 +15,7 @@ local Settings = {
 	Log = false,
 	Optimization = {
 		FpsCap = 10,
-		Disable3dRendering = false
+		Disable3dRendering = true
 	}
 }
 
@@ -79,9 +79,12 @@ function LeaveFishing()
 	end
 end
 
-_G.Hooked = false
-_G.Hooked2 = false
-_G.FishingFFlags = {
+getgenv().Hooked = false
+getgenv().Hooked2 = false
+
+print(ScriptLog, "getgenv().Hooked |", getgenv().Hooked, "getgenv().Hooked2 |", getgenv().Hooked2, "getgenv() |", getgenv())
+
+getgenv().FishingFFlags = {
 	IN_GAME = false,
 	IN_FISHING = false,
 	REQUESTED_CAST = false,
@@ -91,7 +94,7 @@ _G.FishingFFlags = {
 	SENDING_MAIL = false
 }
 
-_G.Stats = {
+getgenv().Stats = {
 	START_TIME = os.time(),
 	START_GEMS = Lib.CurrencyCmds.Get("Diamonds") or 0,
 	GEMS_MADE = 0,
@@ -125,7 +128,7 @@ spawn(function()
 					local x,y,z = Lib.Network.Invoke("Hidden Presents: Found", Id)
 					if z and typeof(z) == "number" then
 						pcall(function()
-							_G.Stats["GEMS_FROM_PRESENTS"] = _G.Stats["GEMS_FROM_PRESENTS"] + z
+							getgenv().Stats["GEMS_FROM_PRESENTS"] = getgenv().Stats["GEMS_FROM_PRESENTS"] + z
 						end)
 					end
 					LastTimeCollected = os.time()
@@ -149,7 +152,7 @@ end)
 spawn(function()
     local CachedValues = {}
     while Settings.Log do
-        for i, v in pairs(_G.FishingFFlags) do
+        for i, v in pairs(getgenv().FishingFFlags) do
             if CachedValues[i] == nil then
                 CachedValues[i] = v
             elseif CachedValues[i] ~= v then
@@ -200,23 +203,23 @@ spawn(function()
 		local TimeSpentMaking = Settings.Webhook.StatsTimeout
 		local DivideAmount = SecondsToMinutes(TimeSpentMaking)
 		
-		return _G.Stats["GEMS_MADE"] / DivideAmount
+		return getgenv().Stats["GEMS_MADE"] / DivideAmount
 	end
 	while task.wait(0.1) do
 		local currentTime = os.time()
-		if currentTime - _G.Stats["START_TIME"] >= Settings.Webhook.StatsTimeout then
+		if currentTime - getgenv().Stats["START_TIME"] >= Settings.Webhook.StatsTimeout then
 			print("Sending Webhook")
-			_G.Stats["GEMS_MADE"] = Lib.CurrencyCmds.Get("Diamonds") - _G.Stats["START_GEMS"]
-			print(BeatufyGems(_G.Stats["GEMS_FROM_FISHING"]))
-			print(BeatufyGems(_G.Stats["GEMS_FROM_PRESENTS"]))
+			getgenv().Stats["GEMS_MADE"] = Lib.CurrencyCmds.Get("Diamonds") - getgenv().Stats["START_GEMS"]
+			print(BeatufyGems(getgenv().Stats["GEMS_FROM_FISHING"]))
+			print(BeatufyGems(getgenv().Stats["GEMS_FROM_PRESENTS"]))
 			local Data = {
 				content = nil,
 				embeds = { {
-					title = "Fishing Stats In "..tostring(SecondsToHours(currentTime - _G.Stats["START_TIME"])),
+					title = "Fishing Stats In "..tostring(SecondsToHours(currentTime - getgenv().Stats["START_TIME"])),
 					color = 5814783,
 					fields = { {
 						name = "💎 Diamonds",
-						value = "-Fishing: "..BeatufyGems(_G.Stats["GEMS_FROM_FISHING"] or 0).." \n-Presents: "..BeatufyGems(_G.Stats["GEMS_FROM_PRESENTS"] or 0).." \n**Total**: "..BeatufyGems(_G.Stats["GEMS_MADE"] or 0)
+						value = "-Fishing: "..BeatufyGems(getgenv().Stats["GEMS_FROM_FISHING"] or 0).." \n-Presents: "..BeatufyGems(getgenv().Stats["GEMS_FROM_PRESENTS"] or 0).." \n**Total**: "..BeatufyGems(getgenv().Stats["GEMS_MADE"] or 0)
 					}, {
 						name = "💎 Diamonds Average",
 						value = "1 Minute: "..BeatufyGems(GetPerMinuteRate()).." \n1 Hour "..BeatufyGems(GetPerMinuteRate()*60).." \n1 Day "..BeatufyGems(GetPerMinuteRate()*60*24)..""
@@ -228,7 +231,7 @@ spawn(function()
 				attachments = { }
 			}
 			SendMessage(Settings.Webhook.url, Data)
-			_G.Stats = {
+			getgenv().Stats = {
 				START_TIME = os.time(),
 				START_GEMS = Lib.CurrencyCmds.Get("Diamonds") or 0,
 				GEMS_MADE = 0,
@@ -299,7 +302,7 @@ end)
 
 function Reel()
 	Lib.Network.Fire("Instancing_FireCustomFromClient", "AdvancedFishing", "RequestReel") 
-	_G.FishingFFlags["REQUESTED_REEL"] = true
+	getgenv().FishingFFlags["REQUESTED_REEL"] = true
 	Lib.Network.Invoke("Instancing_InvokeCustomFromClient", "AdvancedFishing", "Clicked")
 end
 
@@ -315,14 +318,14 @@ end
 while task.wait(5) do
 	local SendingMail = false
 	local x,y
-	if not _G.FishingFFlags["SENDING_MAIL"] and not _G.FishingFFlags["IN_FISHING"] then
+	if not getgenv().FishingFFlags["SENDING_MAIL"] and not getgenv().FishingFFlags["IN_FISHING"] then
 		x,y = EnterFishing()
-		_G.FishingFFlags["IN_FISHING"] = x
+		getgenv().FishingFFlags["IN_FISHING"] = x
 		print(ScriptLog..y)
 	end
 	if Lib.CurrencyCmds.Get("Diamonds") >= Settings.Mailbox.SendGemsAt and Settings.Mailbox.User ~= game:GetService("Players").LocalPlayer.Name then
 		task.wait(6)
-		_G.FishingFFlags["SENDING_MAIL"] = true
+		getgenv().FishingFFlags["SENDING_MAIL"] = true
 		local Id, Am = "", 0
 		for i, v in pairs(Lib.Save.Get().Inventory.Misc) do
 			if v.id == "Magic Shard" then
@@ -345,35 +348,35 @@ while task.wait(5) do
 				Lib.Network.Invoke("Mailbox: Send", Settings.Mailbox.User, RandomText(), "Currency", i, v._am - 10000)
 			end
 		end
-		_G.FishingFFlags["SENDING_MAIL"] = false
+		getgenv().FishingFFlags["SENDING_MAIL"] = false
 	end
-	if not _G.FishingFFlags["SENDING_MAIL"] then
+	if not getgenv().FishingFFlags["SENDING_MAIL"] then
 		if FishingMod then
-			if not _G.Hooked then
+			if not getgenv().Hooked then
 				local old1
 				old1 = hookfunction(FishingMod.StopGame, function(...)
-					_G.FishingFFlags["IN_GAME"] = false
+					getgenv().FishingFFlags["IN_GAME"] = false
 					return old1(...)
 				end)
 				local old2
 				old2 = hookfunction(FishingMod.StartGame, function(tbl)
-					_G.FishingFFlags["IN_GAME"] = true
+					getgenv().FishingFFlags["IN_GAME"] = true
 					return old2(tbl)
 				end)
-				_G.Hooked = true
+				getgenv().Hooked = true
 			end
 		end
 		if ClientMod then
-			if not _G.Hooked2 then
+			if not getgenv().Hooked2 then
 				local old3
 				old3 = hookfunction(ClientMod.Networking.Hook, function(x,y,z)
 					if y == game:GetService("Players").LocalPlayer then
-						_G.FishingFFlags["FISH_ON_HOOK"] = true
+						getgenv().FishingFFlags["FISH_ON_HOOK"] = true
 						
 						if z == "Advanced Legendary" then
-							_G.FishingFFlags["FISH_LEGENDARY"] = true
+							getgenv().FishingFFlags["FISH_LEGENDARY"] = true
 						else
-							_G.FishingFFlags["FISH_LEGENDARY"] = false
+							getgenv().FishingFFlags["FISH_LEGENDARY"] = false
 						end
 						
 					end
@@ -383,49 +386,49 @@ while task.wait(5) do
 				local old4
 				old4 = hookfunction(ClientMod.Networking.Unhook, function(x,y,z)
 					if y == game:GetService("Players").LocalPlayer then
-						_G.FishingFFlags["FISH_ON_HOOK"] = false
+						getgenv().FishingFFlags["FISH_ON_HOOK"] = false
 					end
 					return old4(x,y,z)
 				end) 
 				old = hookfunction(ClientMod.Networking.FishingSuccess, function(tbl1, playerInstance, rarity, tbl2)
 					if playerInstance == game:GetService("Players").LocalPlayer  then
-						_G.FishingFFlags["FISH_ON_HOOK"] = false
+						getgenv().FishingFFlags["FISH_ON_HOOK"] = false
 						if tbl2.data.id == "Diamonds" then
 							pcall(function()
-								_G.Stats["GEMS_FROM_FISHING"] = _G.Stats["GEMS_FROM_FISHING"] + tbl2.data._am or 0
+								getgenv().Stats["GEMS_FROM_FISHING"] = getgenv().Stats["GEMS_FROM_FISHING"] + tbl2.data._am or 0
 							end)
 						end
 					end
 					return old(tbl1, playerInstance, rarity, tbl2)
 				end)
-				_G.Hooked2 = true
+				getgenv().Hooked2 = true
 			end
 		end
-		if _G.Hooked and _G.Hooked2 then
+		if getgenv().Hooked and getgenv().Hooked2 then
 			while task.wait() do
-				if not _G.FishingFFlags["REQUESTED_CAST"] then
+				if not getgenv().FishingFFlags["REQUESTED_CAST"] then
 					Lib.Network.Fire("Instancing_FireCustomFromClient", "AdvancedFishing", "RequestCast", Vector3.new((1410.112498512512 + math.random(0, 49.987645)), 61.625, (-4410.11251251789 + math.random(0, 49.987645))))
-					_G.FishingFFlags["REQUESTED_CAST"] = true
+					getgenv().FishingFFlags["REQUESTED_CAST"] = true
 				end
-				if _G.FishingFFlags["REQUESTED_CAST"] and _G.FishingFFlags["FISH_ON_HOOK"] then
+				if getgenv().FishingFFlags["REQUESTED_CAST"] and getgenv().FishingFFlags["FISH_ON_HOOK"] then
 					if Settings.Fishing.WaitForLegendary then
-						if not _G.FishingFFlags["FISH_LEGENDARY"] then
+						if not getgenv().FishingFFlags["FISH_LEGENDARY"] then
 							while task.wait() do
-								if _G.FishingFFlags["FISH_LEGENDARY"] then break end
+								if getgenv().FishingFFlags["FISH_LEGENDARY"] then break end
 							end
 						end
 					end
 					while task.wait(0.1) do
 						local co = coroutine.create(Reel)
 						local success, errorMsg = coroutine.resume(co)
-						if not _G.FishingFFlags["FISH_ON_HOOK"] then
-							_G.FishingFFlags["REQUESTED_CAST"] = false
-							_G.FishingFFlags["REQUESTED_REEL"] = false
+						if not getgenv().FishingFFlags["FISH_ON_HOOK"] then
+							getgenv().FishingFFlags["REQUESTED_CAST"] = false
+							getgenv().FishingFFlags["REQUESTED_REEL"] = false
 							break
 						end
 					end
 				end
-				if _G.FishingFFlags["SENDING_MAIL"] then
+				if getgenv().FishingFFlags["SENDING_MAIL"] then
 					break
 				end
 			end

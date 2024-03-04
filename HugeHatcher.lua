@@ -677,7 +677,7 @@ spawn(function()
 			repeat task.wait() until lib.WorldCmds.HasLoaded()
 			TeleportToEgg(EggToTeleport)
 			print(ScriptLog.."Hatching "..EggToTeleport)
-			while task.wait(2.29) do
+			while task.wait(2.2) do
 				getgenv().HatchingEgg = true
 				spawn(function()
 					lib.Network.Invoke("Buy Egg", EggToTeleport, Settings.EggSettings.triple, Settings.EggSettings.octuple)
